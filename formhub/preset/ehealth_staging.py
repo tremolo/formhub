@@ -39,6 +39,10 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = "do.not.reply@ehealthnigeria.org"
 
+STATICFILES_DIRS = list(STATICFILES_DIRS)
+STATICFILES_DIRS.append(os.path.join(PROJECT_ROOT,"eHa/static"))
+    # Put strings here, like "/home/html/static" or "C:/www/django/static".
+
 TOUCHFORMS_URL = 'http://localhost:9000/'
 
 SECRET_KEY = 'mlfs33^s1l4xf6a36$0#srgcpj%dd*sisfo6HOktYXB9y'

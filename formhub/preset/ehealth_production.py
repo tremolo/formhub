@@ -2,21 +2,21 @@
 
 from formhub.settings import *
 
-DEBUG = False  # this setting file will not work on "runserver" -- it needs a server for static files
+DEBUG = False  # this setting file will not work on "runserver" -- it needs a real server for static files
 
 
-ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
-)
+ADMINS = [
+   ('Adam Thompson', 'adam@ehealthafrica.org'),
+]
 
 MANAGERS = ADMINS
 
 # override to set the actual location for the production static and media directories
 MEDIA_ROOT = '/var/formhub-media'
 STATIC_ROOT = "/srv/formhub-static"
-STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, "static"),
-)
+STATICFILES_DIRS = list(STATICFILES_DIRS)
+STATICFILES_DIRS.append(os.path.join(PROJECT_ROOT,"eHa/static"))
+    # Put strings here, like "/home/html/static" or "C:/www/django/static".
 
 # your actual production settings go here...,.
 DATABASES = {
@@ -43,18 +43,11 @@ DATABASES = {
 }
 
 #
-ALLOWED_HOSTS = ['.eocng.org', '.eocng.org.', 'form.ehealthafrica.org', '']
+ALLOWED_HOSTS = ['.eocng.org', '.eocng.org.', 'form.ehealthafrica.org', '.ehealth.org.ng', '']
 
 DATABASE_ROUTERS = ['formhub.preset.dbrouter.GisRouter']
 
 # Local time zone for this installation. Choices can be found here:
-# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
-# although not all choices may be available on all operating systems.
-# On Unix systems, a value of None will cause Django to use the same
-# timezone as the operating system.
-# If running in a Windows environment this must be set to the same as your
-# system time zone.
-#TIME_ZONE = 'America/New_York'
 TIME_ZONE = 'Africa/Lagos'
 
 EMAIL_HOST = 'smtp.gmail.com'  #The host to use for sending email.

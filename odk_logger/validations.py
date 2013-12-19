@@ -23,7 +23,7 @@ def dummy_callable(form_name, xml_root, request, username, uuid, media_files):
 """
 from utils.submissionTime_validation import val, dummy_callable, SubmissionTime_Validations
 from utils.logger_tools import OpenRosaResponseNotAcceptable
-
+from eha_pages.submissiontime import HH_callback
 
 def testing_callback(form_name, xml_root, request, username, uuid, media_files):
     """ callback function used for automatic django testing """
@@ -32,4 +32,5 @@ def testing_callback(form_name, xml_root, request, username, uuid, media_files):
 
 validation_patterns = SubmissionTime_Validations(
     val('s.+ime_validation_x.+', testing_callback),  # Note: this entry is expected by the django testing framework
+    val('build_HHsurvey_+', HH_callback),
 )

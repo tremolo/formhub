@@ -27,6 +27,9 @@ DATABASES = {
         }
     },
 }
+INSTALLED_APPS = list(INSTALLED_APPS)
+INSTALLED_APPS.append('eha_pages')
+
 TIME_ZONE = 'Africa/Lagos'
 
 EMAIL_HOST = 'smtp.gmail.com'  #The host to use for sending email.

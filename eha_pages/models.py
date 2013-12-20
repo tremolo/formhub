@@ -10,14 +10,17 @@ class UserSeesThis(models.Model):
     form = models.ForeignKey(XForm, related_name='seen_by')
     class Meta:
         verbose_name_plural = "UserSeesThese"
+        ordering = (['user', 'form'])
     def __unicode__(self):
-        return '{} sees {}'.format(User.get_short_name(), XForm.id_string)
+        return '{} sees {}'.format(self.user, self.form.id_string)
 
 class RealTime_Count(models.Model):
     survey = models.ForeignKey(XForm, related_name='counter')
     group = models.CharField('group', max_length=100, blank=True, null=True)
     group_name = models.CharField('grouping', max_length=30)
     count = models.IntegerField('count')
+    class Meta:
+        ordering = (['survey', 'group'])
     def __unicode__(self):
-        return '{} {} {} {}'.format(group_name, group, count, survey)
+        return '{} {} {} {}'.format(self.group_name, self.group, self.count, self.survey)
 

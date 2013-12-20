@@ -18,13 +18,6 @@ def dummy_callable(form_name, xml_root, request, username, uuid, media_files):
 #     if any([element.tag == 'reject_this' and element.text == "1" for element in xml_root]):
 #         return OpenRosaResponseNotAcceptable('Record refused because "reject_this" was True.')
 
-class HH_global_kludge(object):
-    """ quick and dirty data structure to hold counts for the HHsurvey  project.
-    Delete this ugly monster when the project is complete!
-    Counters are kept a class variable and are altered at run time.  Yeech!
-    """
-    counters = {}
-
 from eha_pages.models import RealTime_Count
 def HH_callback(form_name, xml_root, request, username, uuid, media_files):
     """ callback function used for automatic django testing """

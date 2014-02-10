@@ -57,6 +57,14 @@ class FormLicenseForm(forms.Form):
                                   attrs={'disabled': 'disabled',
                                          'id': 'form-license'}))
 
+class RoleForm(forms.Form):
+    
+    role = forms.ChoiceField(choices=UserProfile.ROLES, widget=forms.Select())
+
+    def __init__(self, *args, **kwargs):
+        self.role = kwargs.pop('role', 0)
+        super(RoleForm, self).__init__(*args, **kwargs)
+        self.fields['role'].initial  = self.role
 
 class PermissionForm(forms.Form):
     for_user = forms.CharField(

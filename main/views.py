@@ -21,7 +21,7 @@ from guardian.shortcuts import assign_perm, remove_perm, get_users_with_perms
 
 from main.forms import UserProfileForm, FormLicenseForm, DataLicenseForm,\
     SupportDocForm, QuickConverterFile, QuickConverterURL, QuickConverter,\
-    SourceForm, PermissionForm, MediaForm, MapboxLayerForm, \
+    SourceForm, PermissionForm, RoleForm, MediaForm, MapboxLayerForm, \
     ActivateSMSSupportFom
 from main.models import UserProfile, MetaData
 from odk_logger.models import Instance, XForm
@@ -245,8 +245,7 @@ def members_list(request):
     context.template = 'people.html'
     context.users = users
     for user in context.users:
-        print user.profile.role
-        user.permissions_form = PermissionForm(username=user.username, role=user.profile.role)
+        user.permissions_form = RoleForm(role=user.profile.role)
     return render_to_response("people.html", context_instance=context)
 
 
@@ -969,6 +968,9 @@ def set_role(request, *args, **kwargs):
         username = request.POST['username']
     except KeyError:
         return HttpResponseBadRequest()
+
+    if not request.user.is_authenticated or not request.user.profile.role >= 10:
+        return HttpResponseForbidden()
 
     user = User.objects.get(username=username)
     user.profile.role = int(new_role)

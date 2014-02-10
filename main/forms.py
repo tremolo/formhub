@@ -40,7 +40,7 @@ DATA_LICENSES_CHOICES = (
 PERM_CHOICES = (
     ('view', ugettext_lazy('Can view')),
     ('edit', ugettext_lazy('Can edit')),
-    ('remove', ugettext_lazy('Remove permissions')),
+    #('remove', ugettext_lazy('Remove permissions')),
 )
 
 
@@ -67,17 +67,19 @@ class PermissionForm(forms.Form):
                 'autocomplete': 'off'
             })
     )
-    perm_type = forms.ChoiceField(choices=PERM_CHOICES, widget=forms.Select())
+    role = forms.ChoiceField(choices=UserProfile.ROLES, widget=forms.Select())
 
-    def __init__(self, username):
-        self.username = username
-        super(PermissionForm, self).__init__()
+    def __init__(self, *args, **kwargs):
+        self.username = kwargs.pop('username', None)
+        self.role = kwargs.pop('role', 0)
+        super(PermissionForm, self).__init__(*args, **kwargs)
+        self.fields['role'].initial  = self.role
 
 
 class UserProfileForm(ModelForm):
     class Meta:
         model = UserProfile
-        exclude = ('user', 'created_by', 'num_of_submissions')
+        exclude = ('user', 'created_by', 'num_of_submissions', 'role')
     email = forms.EmailField(widget=forms.TextInput())
 
 

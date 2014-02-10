@@ -75,13 +75,11 @@ class PermissionForm(forms.Form):
                 'autocomplete': 'off'
             })
     )
-    role = forms.ChoiceField(choices=UserProfile.ROLES, widget=forms.Select())
+    perm_type = forms.ChoiceField(choices=PERM_CHOICES, widget=forms.Select())
 
-    def __init__(self, *args, **kwargs):
-        self.username = kwargs.pop('username', None)
-        self.role = kwargs.pop('role', 0)
-        super(PermissionForm, self).__init__(*args, **kwargs)
-        self.fields['role'].initial  = self.role
+    def __init__(self, username):
+        self.username = username
+        super(PermissionForm, self).__init__()
 
 
 class UserProfileForm(ModelForm):

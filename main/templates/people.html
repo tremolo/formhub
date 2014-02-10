@@ -29,7 +29,7 @@
         <td>{% if user.profile.city %}{{ user.profile.city }},{% endif %} {% if user.profile.country %}{{user.profile.country}}{% endif %}</td>
 	<td>{{ user.date_joined|date:"F j, Y" }}</td>
         <td data-username="{{user.username}}">
-          {% if profile.role >= 10 %}
+          {% if profile.role == UserProfile.ROLES.ADMIN %}
             {{ user.permissions_form.role }}
           {% else %}
             {{ user.profile.get_role_display }}

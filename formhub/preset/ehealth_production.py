@@ -35,7 +35,7 @@ DATABASES = {
         'NAME': 'phis',
         'USER': 'staff',
         'PASSWORD': os.environ['PHIS_PW'],  # the password must be stored in an environment variable
-        'HOST': 'gisserver.yourdomain.org',
+        'HOST': os.environ.get("FORMHUB_DB_SERVER", 'dbserver.yourdomain.org'), # the server name may be in env
         'OPTIONS': {
             'autocommit': True,
         }
@@ -43,7 +43,7 @@ DATABASES = {
 }
 
 #
-ALLOWED_HOSTS = ['.eocng.org', '.eocng.org.', 'form.ehealthafrica.org', '']
+ALLOWED_HOSTS = ['.eocng.org', '.eocng.org.', '.ehealth.org.ng' ,'form.ehealthafrica.org', '']
 
 DATABASE_ROUTERS = ['formhub.preset.dbrouter.GisRouter']
 

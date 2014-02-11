@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.http import HttpResponse, HttpResponseBadRequest, \
     HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotFound,\
-    HttpResponseServerError
+    HttpResponseServerError, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import loader, RequestContext
 from django.utils.translation import ugettext as _
@@ -21,7 +21,7 @@ from guardian.shortcuts import assign_perm, remove_perm, get_users_with_perms
 
 from main.forms import UserProfileForm, FormLicenseForm, DataLicenseForm,\
     SupportDocForm, QuickConverterFile, QuickConverterURL, QuickConverter,\
-    SourceForm, PermissionForm, MediaForm, MapboxLayerForm, \
+    SourceForm, PermissionForm, RoleForm, MediaForm, MapboxLayerForm, \
     ActivateSMSSupportFom
 from main.models import UserProfile, MetaData
 from odk_logger.models import Instance, XForm
@@ -244,6 +244,8 @@ def members_list(request):
     users = User.objects.all()
     context.template = 'people.html'
     context.users = users
+    for user in context.users:
+        user.permissions_form = RoleForm(role=user.profile.role)
     return render_to_response("people.html", context_instance=context)
 
 
@@ -323,7 +325,7 @@ def show(request, username=None, id_string=None, uuid=None):
     ) > 0
     context.public_link = MetaData.public_link(xform)
     context.is_owner = is_owner
-    context.can_edit = can_edit
+    context.can_edit = can_edit and request.user.profile.role >= 10
     context.can_view = can_view or request.session.get('public_link')
     context.xform = xform
     context.content_user = xform.user
@@ -365,7 +367,7 @@ def show(request, username=None, id_string=None, uuid=None):
                 has_perm.append(_(u"Can View"))
             users_with_perms.append((perm[0], u" | ".join(has_perm)))
         context.users_with_perms = users_with_perms
-        context.permission_form = PermissionForm(username)
+        context.permission_form = PermissionForm(username=username)
     if xform.allows_sms:
         context.sms_support_doc = get_autodoc_for(xform)
     return render_to_response("show.html", context_instance=context)
@@ -957,6 +959,25 @@ def form_photos(request, username, id_string):
     context.profile, created = UserProfile.objects.get_or_create(user=owner)
     return render_to_response('form_photos.html', context_instance=context)
 
+@require_POST
+def set_role(request, *args, **kwargs):
+
+    user = request.user
+    try:
+        new_role = request.POST['role']
+        username = request.POST['username']
+    except KeyError:
+        return HttpResponseBadRequest()
+
+    if not request.user.is_authenticated or not request.user.profile.role >= 10:
+        return HttpResponseForbidden()
+
+    user = User.objects.get(username=username)
+    user.profile.role = int(new_role)
+    user.profile.save()
+    return HttpResponse(
+            json.dumps(
+                {'status': 'success'}), mimetype='application/json')
 
 @require_POST
 def set_perm(request, username, id_string):

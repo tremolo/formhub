@@ -367,6 +367,17 @@ class ExportBuilder(object):
 
         return row
 
+    def to_json_export(self, path, data, *args):
+        from odk_viewer.models import DataDictionary, ParsedInstance
+        username = args[0]
+        form_id_string = args[1]
+        pis = ParsedInstance.objects.filter(instance__user__username=username,
+                                        instance__xform__id_string=form_id_string,
+                                        lat__isnull=False, lng__isnull=False)
+        json_dump = [x.to_dict() for x in pis]
+        with open(path, 'w') as outfile:
+            json.dump(json_dump, outfile)
+
     def to_zipped_csv(self, path, data, *args):
         def encode_if_str(row, key):
             val = row.get(key)
@@ -555,6 +566,7 @@ def generate_export(export_type, extension, username, id_string,
         Export.XLS_EXPORT: 'to_xls_export',
         Export.CSV_EXPORT: 'to_flat_csv_export',
         Export.CSV_ZIP_EXPORT: 'to_zipped_csv',
+        Export.JSON_EXPORT: 'to_json_export',
     }
 
     xform = XForm.objects.get(user__username=username, id_string=id_string)
@@ -600,7 +612,7 @@ def generate_export(export_type, extension, username, id_string,
     temp_file.close()
 
     dir_name, basename = os.path.split(export_filename)
-
+    
     # get or create export object
     if export_id:
         export = Export.objects.get(id=export_id)

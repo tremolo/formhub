@@ -29,6 +29,7 @@ class Export(models.Model):
     ZIP_EXPORT = 'zip'
     GDOC_EXPORT = 'gdoc'
     CSV_ZIP_EXPORT = 'csv_zip'
+    JSON_EXPORT = 'json'
 
     EXPORT_MIMES = {
         'xls': 'vnd.ms-excel',
@@ -36,7 +37,8 @@ class Export(models.Model):
         'csv': 'csv',
         'zip': 'zip',
         'csv_zip': 'zip',
-        'kml': 'vnd.google-earth.kml+xml'
+        'kml': 'vnd.google-earth.kml+xml',
+        'json': 'application/json'
     }
 
     EXPORT_TYPES = [
@@ -46,6 +48,7 @@ class Export(models.Model):
         (ZIP_EXPORT, 'ZIP'),
         (KML_EXPORT, 'kml'),
         (CSV_ZIP_EXPORT, 'CSV ZIP'),
+        (JSON_EXPORT, 'JSON_EXPORT')
     ]
 
     EXPORT_TYPE_DICT = dict(export_type for export_type in EXPORT_TYPES)

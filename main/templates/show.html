@@ -181,6 +181,17 @@
             </ul>
           </div>
           <div class="btn-group">
+            <a class="btn" href="{% url "odk_viewer.views.export_list" content_user.username xform.id_string 'json' %}" rel="tooltip" data-original-title="{% trans 'Export a json file' %}"><i class="icon-download-alt"></i> <font color=#000>{% trans "json" %}</font></a>
+            <button class="btn dropdown-toggle" data-toggle="dropdown">
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <input class="input-xxlarge" type="text" size="16" value="{{base_url}}{% url "odk_viewer.views.export_list" content_user.username xform.id_string 'json' %}"/>
+              </li>
+            </ul>
+          </div>          
+          <div class="btn-group">
             <a class="btn" href="{% url "odk_viewer.views.export_list" content_user.username xform.id_string 'gdoc' %}" rel="tooltip" data-original-title="{% trans 'Export to google docs' %}" target="_blank"><i class="icon-download-alt"></i> <font color=#000>{% trans "gdocs" %}</font></a>
             <button class="btn dropdown-toggle" data-toggle="dropdown">
                 <span class="caret"></span>

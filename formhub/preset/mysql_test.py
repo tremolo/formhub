@@ -16,7 +16,7 @@ DATABASES = {
     'NAME': 'test',
     'USER': 'adotest',
     'PASSWORD': '12345678',  # in production, use something like: os.environ['MY_DB_PASSWORD']
-    'HOST': '25.116.170.194'
+    'HOST': 'cdc-staging.eocng.org'
     }
 }
 

@@ -6,7 +6,7 @@ DEBUG = False  # this setting file will not work on "runserver" -- it needs a se
 
 
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
+    ('Adam', 'adam@ehealthafrica.org'),
 )
 
 MANAGERS = ADMINS
@@ -43,7 +43,7 @@ DATABASES = {
 }
 
 #
-ALLOWED_HOSTS = ['.eocng.org', '.eocng.org.', '.ehealth.org.ng' ,'form.ehealthafrica.org', '']
+ALLOWED_HOSTS = ['.eocng.org', '.eocng.org.', '.ehealth.org.ng' ,'forms.ehealthafrica.org', '']
 
 DATABASE_ROUTERS = ['formhub.preset.dbrouter.GisRouter']
 

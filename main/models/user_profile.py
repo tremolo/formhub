@@ -33,7 +33,7 @@ class UserProfile(models.Model):
         (ADMIN, 'Admin'),
         (VIEWER, 'Viewer'),
     )
-    role = models.PositiveIntegerField(choices=ROLES, default=VIEWER)
+    role = models.PositiveIntegerField(choices=ROLES, null=True, default=VIEWER)
 
     def __unicode__(self):
         return u'%s[%s]' % (self.name, self.user.username)

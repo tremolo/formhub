@@ -998,7 +998,7 @@ def set_perm(request, username, id_string):
         except User.DoesNotExist:
             messages.add_message(
                 request, messages.INFO,
-                _(u"Wrong username <b>%s</b>." % for_user),
+                _(u'Username "%s" does not exist.' % for_user),
                 extra_tags='alert-error')
         else:
             if perm_type == 'edit' and\

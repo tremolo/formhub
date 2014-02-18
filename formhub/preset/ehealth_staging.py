@@ -21,7 +21,7 @@ DATABASES = {
         'NAME': 'formhub_dev',
         'USER': 'formhub_dev',
         'PASSWORD': '12345678',
-        'HOST': 'localhost',
+        'HOST': 'cdc-staging.eocng.org',
         'OPTIONS': {
             'autocommit': True,  # NOTE: this option becomes obsolete in django 1.6
         }

@@ -372,8 +372,7 @@ class ExportBuilder(object):
         username = args[0]
         form_id_string = args[1]
         pis = ParsedInstance.objects.filter(instance__user__username=username,
-                                        instance__xform__id_string=form_id_string,
-                                        lat__isnull=False, lng__isnull=False)
+                                        instance__xform__id_string=form_id_string)
         json_dump = [x.to_dict() for x in pis]
         with open(path, 'w') as outfile:
             json.dump(json_dump, outfile)

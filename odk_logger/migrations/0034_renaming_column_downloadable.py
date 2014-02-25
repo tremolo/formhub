@@ -8,10 +8,6 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> ef9fd68... add migration & fix test
         # Deleting field 'XForm.downloadable'
         db.delete_column(u'odk_logger_xform', 'downloadable')
 
@@ -19,7 +15,6 @@ class Migration(SchemaMigration):
         db.add_column(u'odk_logger_xform', 'form_active',
                       self.gf('django.db.models.fields.BooleanField')(default=True),
                       keep_default=False)
-<<<<<<< HEAD
 
 
     def backwards(self, orm):
@@ -30,26 +25,6 @@ class Migration(SchemaMigration):
 
         # Deleting field 'XForm.form_active'
         db.delete_column(u'odk_logger_xform', 'form_active')
-=======
-        # Renaming field 'mymodel.old_field_name' to 'mymodel.new_field_name'
-        db.rename_column(u'odk_logger_xform', 'downloadable', 'form_active')
-
-
-    def backwards(self, orm):
-        db.rename_column(u'odk_logger_xform', 'form_active', 'downloadable')
->>>>>>> 69e172c... add migration
-=======
-
-
-    def backwards(self, orm):
-        # Adding field 'XForm.downloadable'
-        db.add_column(u'odk_logger_xform', 'downloadable',
-                      self.gf('django.db.models.fields.BooleanField')(default=True),
-                      keep_default=False)
-
-        # Deleting field 'XForm.form_active'
-        db.delete_column(u'odk_logger_xform', 'form_active')
->>>>>>> ef9fd68... add migration & fix test
 
 
     models = {
@@ -167,12 +142,4 @@ class Migration(SchemaMigration):
         }
     }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
     complete_apps = ['odk_logger']
-=======
-    complete_apps = ['odk_logger']
->>>>>>> 69e172c... add migration
-=======
-    complete_apps = ['odk_logger']
->>>>>>> ef9fd68... add migration & fix test

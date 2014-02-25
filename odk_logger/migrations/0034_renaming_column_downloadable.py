@@ -8,6 +8,7 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+<<<<<<< HEAD
         # Deleting field 'XForm.downloadable'
         db.delete_column(u'odk_logger_xform', 'downloadable')
 
@@ -25,6 +26,14 @@ class Migration(SchemaMigration):
 
         # Deleting field 'XForm.form_active'
         db.delete_column(u'odk_logger_xform', 'form_active')
+=======
+        # Renaming field 'mymodel.old_field_name' to 'mymodel.new_field_name'
+        db.rename_column(u'odk_logger_xform', 'downloadable', 'form_active')
+
+
+    def backwards(self, orm):
+        db.rename_column(u'odk_logger_xform', 'form_active', 'downloadable')
+>>>>>>> 69e172c... add migration
 
 
     models = {
@@ -142,4 +151,8 @@ class Migration(SchemaMigration):
         }
     }
 
+<<<<<<< HEAD
     complete_apps = ['odk_logger']
+=======
+    complete_apps = ['odk_logger']
+>>>>>>> 69e172c... add migration

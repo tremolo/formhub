@@ -54,6 +54,7 @@ def remove_dups_from_list_maintain_order(l):
 def get_prefix_from_xpath(xpath):
     xpath = str(xpath)
     parts = xpath.rsplit('/', 1)
+
     if len(parts) == 1:
         return None
     elif len(parts) == 2:
@@ -263,6 +264,7 @@ class XLSDataFrameBuilder(AbstractDataFrameBuilder):
                     if self.group_delimiter != DEFAULT_GROUP_DELIMITER:
                         columns = [self.group_delimiter.join(col.split("/")) for col in columns ]
                     columns = columns + self.EXTRA_COLUMNS
+                    print columns
                     writer = XLSDataFrameWriter(records, columns)
                     writer.write_to_excel(self.xls_writer, section_name,
                             header=header, index=False)
@@ -438,6 +440,7 @@ class XLSDataFrameBuilder(AbstractDataFrameBuilder):
         elif isinstance(column, basestring):
             xpath = column
         assert(xpath)
+        print xpath
         # make sure column is not already in list
         if xpath not in section["columns"]:
             section["columns"].append(xpath)
@@ -590,6 +593,7 @@ class CSVDataFrameBuilder(AbstractDataFrameBuilder):
 
         # add extra columns
         columns += [col for col in self.ADDITIONAL_COLUMNS]
+        columns = [column.split('/')[-1] for column in columns]
 
         header = True
         if hasattr(file_or_path, 'read'):
@@ -610,6 +614,7 @@ class CSVDataFrameBuilder(AbstractDataFrameBuilder):
 class XLSDataFrameWriter(object):
     def __init__(self, records, columns):
         self.dataframe = DataFrame(records, columns=columns)
+        print columns
 
     def write_to_excel(self, excel_writer, sheet_name, header=False,
         index=False):

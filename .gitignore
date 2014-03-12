@@ -9,7 +9,6 @@ site_media/attachments
 site_media/css/sass/.sass-cache/*
 tmp/*
 xform_manager_dataset.json
-formhub/preset/production.py
 
 # folder to hold csv files
 csvs

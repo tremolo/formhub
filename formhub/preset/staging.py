@@ -10,28 +10,9 @@ except:
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-TEMPLATE_STRING_IF_INVALID = '' # '***Invalid Template String***'
+TEMPLATE_STRING_IF_INVALID = ''
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'formhub_dev',
-        'USER': 'formhub_dev',
-        'PASSWORD': '12345678',
-    },
-#    'gis': {
-#        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-#        'NAME': 'phis',
-#        'USER': 'nomadstaff',
-#        'PASSWORD': 'nopolio',
-#        'HOST': 'localhost',
-#        'OPTIONS': {
-#            'autocommit': True,
-#        }
-#    }
-}
-
-# DATABASE_ROUTERS = ['formhub.preset.dbrouter.GisRouter']
+# see: http://docs.djangoproject.com/en/dev/ref/settings/#databases
 
 # TIME_ZONE = 'UTC'
 
@@ -43,6 +24,8 @@ TESTING_MODE = False
 if len(sys.argv) >= 2 and (sys.argv[1] == "test" or sys.argv[1] == "test_all"):
     # This trick works only when we run tests from the command line.
     TESTING_MODE = True
+else:
+    TESTING_MODE = False
 
 if TESTING_MODE:
     MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'test_media/')

@@ -2,7 +2,7 @@
 CELERYBEAT_CHDIR="/opt/formhub/"
 
 # Python interpreter from environment, if using virtualenv
-ENV_PYTHON="/home/vernon/Envs/formhub/bin/python"
+ENV_PYTHON="/opt/virtual_environments/formhub/bin/python"
 
 # Path to celerybeat
 CELERYBEAT="$ENV_PYTHON $CELERYD_CHDIR/manage.py celerybeat"
@@ -19,4 +19,4 @@ CELERYBEAT_GROUP="www-data"
 
 # Name of the projects settings module.
 
-export DJANGO_SETTINGS_MODULE="formhub.preset.production"
+export DJANGO_SETTINGS_MODULE="formhub.preset.ehealth_staging"

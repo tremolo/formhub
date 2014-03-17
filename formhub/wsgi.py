@@ -1,6 +1,6 @@
 import os
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "formhub.preset.production")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "formhub.preset.staging")
 
 # This application object is used by the development server
 # as well as any WSGI server configured to use this file.

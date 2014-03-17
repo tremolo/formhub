@@ -14,9 +14,33 @@ TEMPLATE_STRING_IF_INVALID = ''
 
 # see: http://docs.djangoproject.com/en/dev/ref/settings/#databases
 
-# TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Lagos'
+
+ADMINS = (
+    ('vernon', 'vernon.cole@ehealthafrica.org'),
+)
+
+# override to set the actual location for the production static and media directories
+MEDIA_ROOT = '/var/formhub-media'
+STATIC_ROOT = "/srv/formhub-static"
+
+#postgres
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'formhub_dev',
+        'USER': 'formhub_dev',
+        'PASSWORD': '12345678',
+        'HOST': 'cdc-staging.eocng.org',
+        'OPTIONS': {
+            'autocommit': True,  # NOTE: this option becomes obsolete in django 1.6
+        }
+    },
+}
 
 TOUCHFORMS_URL = 'http://localhost:9000/'
+
+ALLOWED_HOSTS = ['.eocng.org', '.ehealth.org.ng' ,'forms.ehealthafrica.org', '']
 
 SECRET_KEY = 'mlfs33^s1l4xf6a36$0#srgcpj%dd*sisfo6HOktYXB9y'
 

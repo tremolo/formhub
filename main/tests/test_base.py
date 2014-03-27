@@ -58,7 +58,7 @@ class MainTestCase(TestCase):
     this_directory = os.path.dirname(__file__)
 
     def _publish_xls_file(self, path):
-        if not path.startswith('/%s/' % self.user.username):
+        if not (path.startswith('/%s/' % self.user.username) or path.startswith(self.this_directory)):
             path = os.path.join(self.this_directory, path)
         with open(path) as xls_file:
             post_data = {'xls_file': xls_file}

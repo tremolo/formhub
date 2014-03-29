@@ -279,10 +279,6 @@ class TestSite(MainTestCase):
         self.assertEquals(data, [])
 
     def _check_group_xpaths_do_not_appear_in_dicts_for_export(self):
-        # todo: not sure which order the instances are getting put
-        # into the database, the hard coded index below should be
-        # fixed.
-        instance = self.xform.surveys.all()[1]
         expected_dict = {
             u"transportation": {
                 u"meta": {u"instanceID": u"uuid:f3d8dc65-91a6-4d0f-9e97-802128083390"},
@@ -298,7 +294,15 @@ class TestSite(MainTestCase):
                 }
             }
         }
-        self.assertEqual(instance.get_dict(flat=False), expected_dict)
+        qs = self.xform.surveys.all()
+        for instance in qs:  # we do not know what order the instances will have.  Must search for the test record.
+            dict = instance.get_dict(flat=False)
+            if dict == expected_dict:
+                break  # found the correct record (and passed the first test)
+        else:
+            self.assertEqual(dict, expected_dict)  # fail (on the last) if we could not find an acceptable candidate
+
+        # using the record we just located, try the second test
         expected_dict = {
             u"transport/available_transportation_types_to_referral_facility":
             u"ambulance bicycle",

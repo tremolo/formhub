@@ -1,3 +1,4 @@
+from __future__ import print_function
 import base64
 import os
 import re
@@ -184,8 +185,8 @@ class MainTestCase(TestCase):
         try:
             urllib2.urlopen(url, timeout=timeout)
             return True
-        except urllib2.URLError:
-            pass
+        except urllib2.URLError as e:
+            print('Error attempting to contact "{}":{}'.format(url, str(e)))
         return False
 
     def _internet_on(self, url='http://74.125.113.99'):

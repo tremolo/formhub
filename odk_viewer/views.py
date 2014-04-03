@@ -399,13 +399,16 @@ def export_list(request, username, id_string, export_type):
     if not has_permission(xform, owner, request):
         return HttpResponseForbidden(_(u'Not shared.'))
 
-    if should_create_new_export(xform, export_type):
-        try:
-            create_async_export(
-                xform, export_type, query=None, force_xlsx=True)
-        except Export.ExportTypeError:
-            return HttpResponseBadRequest(
-                _("%s is not a valid export type" % export_type))
+    # This creates an automatic export when they system believes there is no existing download available
+    # or if the available downloads are considered outdated.
+    #
+    # if should_create_new_export(xform, export_type):
+    #     try:
+    #         create_async_export(
+    #             xform, export_type, query=None, force_xlsx=True)
+    #     except Export.ExportTypeError:
+    #         return HttpResponseBadRequest(
+    #             _("%s is not a valid export type" % export_type))
 
     context = RequestContext(request)
     context.username = owner.username

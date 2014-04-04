@@ -626,7 +626,10 @@ def query_mongo(username, id_string, query=None, hide_deleted=True):
         query = {"$and": [query, {"_deleted_at": None}]}
     return xform_instances.find(query)
 
-
+#
+#  This could be useful if it was used to generate a message instead of auto start the export.
+#  Perhaps it should show a warning if the current downloads are considered outdated.
+#
 def should_create_new_export(xform, export_type):
     from odk_viewer.models import Export
     if Export.objects.filter(xform=xform, export_type=export_type).count() == 0\

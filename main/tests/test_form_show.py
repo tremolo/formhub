@@ -1,4 +1,6 @@
 import os
+import unittest
+from django.conf import settings
 from test_base import MainTestCase
 from main.views import show, form_photos, update_xform, profile, enketo_preview
 from django.core.urlresolvers import reverse
@@ -423,6 +425,7 @@ class TestFormShow(MainTestCase):
         response = self.anon.get(url)
         self.assertEqual(response.status_code, 302)
 
+    @unittest.skipUnless('mysql' in settings.DATABASES['default']['ENGINE'], "requires MySQL")
     def test_form_urls_case_insensitive(self):
         url = reverse(show, kwargs={
             'username': self.user.username.upper(),

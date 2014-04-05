@@ -30,7 +30,7 @@ class TestKMLExport(MainTestCase):
             kml_export,
             kwargs={
                 'username': self.user.username, 'id_string': 'gps'})
-        instances = Instance.objects.filter(xform__id_string='gps')
+        instances = Instance.objects.filter(xform__id_string='gps').order_by('date_created')
         self.assertTrue(instances.count() >= 2)
         first = '%s' % instances[0].pk
         second = '%s' % instances[1].pk

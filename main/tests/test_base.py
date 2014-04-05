@@ -4,7 +4,8 @@ import os
 import re
 from tempfile import NamedTemporaryFile
 import urllib2
-
+import socket
+import unittest
 from cStringIO import StringIO
 
 from django.contrib.auth.models import User
@@ -185,12 +186,12 @@ class MainTestCase(TestCase):
         try:
             urllib2.urlopen(url, timeout=timeout)
             return True
+        except socket.timeout as e:   # starting with Python 2.7 does not return urllib2.URLError
+            raise unittest.SkipTest('Internet timeout attempting to contact "{}":{}'.format(url, str(e)))
         except urllib2.URLError as e:
-            print('Error attempting to contact "{}":{}'.format(url, str(e)))
-        return False
+            raise unittest.SkipTest('Internet trouble attempting to contact "{}":{}'.format(url, str(e)))
 
-    def _internet_on(self, url='http://74.125.113.99'):
-        # default value is some google IP
+    def _internet_on(self, url='http://www.google.com'):
         return self._check_url(url)
 
     def _set_auth_headers(self, username, password):

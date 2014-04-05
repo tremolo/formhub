@@ -106,7 +106,7 @@ class TestBriefcaseAPI(MainTestCase):
 
     def test_view_submissionList_numEntries(self):
         def get_last_index(xform, last_index=None):
-            instances = Instance.objects.filter(xform=xform)
+            instances = Instance.objects.filter(xform=xform).order_by('date_created')
             if not last_index and instances.count():
                 return instances[instances.count() - 1].pk
             elif last_index:

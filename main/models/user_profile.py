@@ -27,6 +27,14 @@ class UserProfile(models.Model):
     created_by = models.ForeignKey(User, null=True, blank=True)
     num_of_submissions = models.IntegerField(default=0)
 
+    ADMIN = 10
+    VIEWER = 0
+    ROLES = (
+        (ADMIN, 'Admin'),
+        (VIEWER, 'Viewer'),
+    )
+    role = models.PositiveIntegerField(choices=ROLES, null=True, default=VIEWER)
+
     def __unicode__(self):
         return u'%s[%s]' % (self.name, self.user.username)
 

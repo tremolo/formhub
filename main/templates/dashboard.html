@@ -3,7 +3,9 @@
 {% block content %}
 
 {% load i18n %}
+<!--
 <script type="text/javascript" src="https://www.dropbox.com/static/api/1/dropbox.js" id="dropboxjs" data-app-key="0jxhquu5po7r0an"></script>
+-->
 <section id="profile">
   <div class="row">
     <div class="span5">
@@ -13,7 +15,7 @@
         <br/>
         <br/>
         {% url "syntax" as syntax_url %}
-        {% blocktrans %}Learn about the XLSForm syntax <a href="{{ syntax_url }}">here</a>, email <a href="https://groups.google.com/forum/?fromgroups#!forum/formhub-users">formhub users mailing list</a> if you have questions, and checkout examples at: <br/><a href="/formhub_u/">Formhub University</a>.{% endblocktrans %}
+        {% blocktrans %}Learn about the XLSForm syntax <a href="{{ syntax_url }}">here</a>, email <a href="https://groups.google.com/forum/?fromgroups#!forum/formhub-users">formhub users mailing list</a> if you have questions, and checkout examples at: <a href="/formhub_u/">Formhub University</a>.{% endblocktrans %}
         <br/>
         <br/>
         <form action="." method="post" enctype="multipart/form-data">
@@ -22,7 +24,7 @@
             <ul class="nav nav-tabs nomarginbottom">
                 <li class="active"><a href="#upload" data-toggle="tab">{% trans "Upload" %}</a></li>
                 <li><a href="#url" data-toggle="tab">{% trans "URL" %}</a></li>
-								<li><a href="#db-chooser" data-toggle="tab">{% trans "Dropbox" %}</a></li>
+				<!-- <li><a href="#db-chooser" data-toggle="tab"> Dropbox</a></li> -->
             </ul>
             <div class="tab-content bordered-side">
                 <div class="tab-pane active" id="upload">
@@ -35,9 +37,11 @@
                         {{ form_url.as_table }}
                     </table>
                 </div>
+                <!--
                 <div class="tab-pane" id="db-chooser">
-									<input type="dropbox-chooser" name="dropbox_xls_url" data-link-type="direct" style="visibility: hidden;"/>
+				<input type="dropbox-chooser" name="dropbox_xls_url" data-link-type="direct" style="visibility: hidden;"/>
                 </div>
+                -->
             </div>
             </div>
             <div style='float:middle;'>

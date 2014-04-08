@@ -51,8 +51,8 @@
         </td>
         <td class="centered">{{ submission_count|intcomma }}</td>
         <td class="centered">
-                <a class="btn" href="{% url "odk_logger.views.enter_data" xform.user.username xform.id_string %}"><i class="icon-edit"></i> {% trans "Web" %}</a>
-                <a data-toggle="modal" data-target="#popupmodal" class="showqr btn" href="{% url "get_qrcode" xform.user.username xform.id_string %}"><i class="icon-tablet"></i> {% trans "Mobile" %}</a>
+                <a class="btn {% if user.profile.role < 10 %}disabled{% endif %}" href="{% url "odk_logger.views.enter_data" xform.user.username xform.id_string %}"><i class="icon-edit"></i> {% trans "Web" %}</a>
+                <a data-toggle="modal" data-target="#popupmodal" class="showqr btn {% if user.profile.role < 10 %}disabled{% endif %}" href="{% url "get_qrcode" xform.user.username xform.id_string %}"><i class="icon-tablet"></i> {% trans "Mobile" %}</a>
         </td>
         <td class="centered">
                 {% if not xform.encrypted and has_surveys_with_geopoints %}
@@ -65,6 +65,7 @@
                 {% if  not xform.encrypted and submission_count > 0 %}
                     <a href="{% url "main.views.form_photos" content_user.username xform.id_string %}" data-original-title="{% trans 'View Photo' %}" rel="tooltip" >
                     <i class="icon-camera icon-large"></i>
+                    </a>
                     <a href="{% url "odk_viewer.views.data_view" content_user.username xform.id_string %}" data-original-title="{% trans 'View Submitted Data' %}" rel="tooltip">
                         <i class="icon-list icon-large inactive"></i>
                     </a>
@@ -93,11 +94,11 @@
               {{ time_of_last_submission|date:"N d, Y" }}
           {% endif %}
         </td>
-        <td>{{ xform.downloadable|lower }}</td>
+        <td>{{ xform.form_active|lower }}</td>
         <td>
             {% if submission_count <= 0 %}
             <div class="dropdown">
-                <a class="btn btn-flat dropdown-toggle" data-toggle="dropdown" href="#" data-original-title="{% trans 'Options' %}" rel="tooltip">
+                <a class="{% if user.profile.role < 10 %}disabled{% endif %} btn btn-flat dropdown-toggle" data-toggle="dropdown" href="#" data-original-title="{% trans 'Options' %}" rel="tooltip">
                     <i class="icon-cog"></i>
                 </a>
                     <ul class="dropdown-menu form-options left-arrow" role="menu" aria-labelledby="dropdownMenu">
@@ -204,6 +205,7 @@
                       {% if submission_count > 0 %}
                           <a href="{% url "main.views.form_photos" xform.user.username xform.id_string %}" data-original-title="{% trans 'View Photo' %}" rel="tooltip" >
                           <i class="icon-camera icon-large"></i>
+                          </a>
                           <a href="{% url "odk_viewer.views.data_view" xform.user.username xform.id_string %}" data-original-title="{% trans 'View Submitted Data' %}" rel="tooltip">
                               <i class="icon-list icon-large inactive"></i>
                           </a>
@@ -293,6 +295,7 @@
                                 {% if submission_count > 0 %}
                                     <a href="{% url "main.views.form_photos" xform.user.username xform.id_string %}" data-original-title="{% trans 'View Photo' %}" rel="tooltip" >
                                     <i class="icon-camera icon-large"></i>
+                                    </a>
                                     <a href="{% url "odk_viewer.views.data_view" xform.user.username xform.id_string %}" data-original-title="{% trans 'View Submitted Data' %}" rel="tooltip">
                                         <i class="icon-list icon-large inactive"></i>
                                     </a>

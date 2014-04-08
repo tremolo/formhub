@@ -40,7 +40,7 @@ DATA_LICENSES_CHOICES = (
 PERM_CHOICES = (
     ('view', ugettext_lazy('Can view')),
     ('edit', ugettext_lazy('Can edit')),
-    ('remove', ugettext_lazy('Remove permissions')),
+    #('remove', ugettext_lazy('Remove permissions')),
 )
 
 
@@ -57,6 +57,14 @@ class FormLicenseForm(forms.Form):
                                   attrs={'disabled': 'disabled',
                                          'id': 'form-license'}))
 
+class RoleForm(forms.Form):
+    
+    role = forms.ChoiceField(choices=UserProfile.ROLES, widget=forms.Select())
+
+    def __init__(self, *args, **kwargs):
+        self.role = kwargs.pop('role', 0)
+        super(RoleForm, self).__init__(*args, **kwargs)
+        self.fields['role'].initial  = self.role
 
 class PermissionForm(forms.Form):
     for_user = forms.CharField(
@@ -77,7 +85,7 @@ class PermissionForm(forms.Form):
 class UserProfileForm(ModelForm):
     class Meta:
         model = UserProfile
-        exclude = ('user', 'created_by', 'num_of_submissions')
+        exclude = ('user', 'created_by', 'num_of_submissions', 'role')
     email = forms.EmailField(widget=forms.TextInput())
 
 

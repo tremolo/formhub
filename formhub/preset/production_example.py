@@ -1,9 +1,14 @@
 # this system uses structured settings.py as defined in http://www.slideshare.net/jacobian/the-best-and-worst-of-django
 
-from formhub.settings import *
+try:
+    from ..settings import *
+except ImportError:
+    import sys, django
+    django.utils.six.reraise(RuntimeError, *sys.exc_info()[1:])  # use RuntimeError to extend the traceback
+except:
+    raise
 
 DEBUG = False  # this setting file will not work on "runserver" -- it needs a server for static files
-TESTING_MODE = False  # used by celery startup
 
 # override to set the actual location for the production static and media directories
 MEDIA_ROOT = '/var/formhub-media'
@@ -38,7 +43,7 @@ DATABASES = {
     }
 }
 
-DATABASE_ROUTERS = ['formhub.preset.dbrouter.GisRouter']
+DATABASE_ROUTERS = ['formhub.preset.dbrouter_example.GisRouter']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -59,6 +64,5 @@ MONGO_DATABASE = {
     'USER': '',
     'PASSWORD': ''
 }
-
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'mlfs33^s1l4xf6a36$0#j%dd*sisfo6HOktYXB9y'

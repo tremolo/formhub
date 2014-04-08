@@ -157,7 +157,7 @@ class TestSite(MainTestCase):
                 self.assertEqual(XForm.objects.count(), pre_count + 1)
             else:
                 return False
-        self.xform = list(XForm.objects.all())[-1]
+        self.xform = list(XForm.objects.all().order_by('date_created'))[-1]
         return True
 
     def _publish_xls_file(self):

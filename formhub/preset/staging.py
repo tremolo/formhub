@@ -38,6 +38,8 @@ DATABASES = {
     },
 }
 
+BROKER_URL = 'amqp://formhub:12345678@localhost:5672/formhub_vhost'
+
 TOUCHFORMS_URL = 'http://localhost:9000/'
 
 ALLOWED_HOSTS = ['.eocng.org', '.ehealth.org.ng' ,'forms.ehealthafrica.org', '']

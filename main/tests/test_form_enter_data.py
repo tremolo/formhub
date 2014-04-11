@@ -1,6 +1,7 @@
 import os
 import re
 import requests
+import unittest
 
 from urlparse import urlparse
 from time import time
@@ -75,6 +76,7 @@ class TestFormEnterData(MainTestCase):
             request, self.user.username, self.xform.id_string)
         return response
 
+    @unittest.skipIf(settings.EHEALTH_AFRICA_OPTOMIZATIONS, 'No QRCODE on eHealth screens')
     def test_qrcode_view(self):
         with HTTMock(enketo_mock):
             response = self._get_grcode_view_response()
@@ -84,6 +86,7 @@ class TestFormEnterData(MainTestCase):
                 data = f.read()
                 self.assertContains(response, data.strip(), status_code=200)
 
+    @unittest.skipIf(settings.EHEALTH_AFRICA_OPTOMIZATIONS, 'No QRCODE on eHealth screens')
     def test_qrcode_view_with_enketo_error(self):
         with HTTMock(enketo_error_mock):
             response = self._get_grcode_view_response()

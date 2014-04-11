@@ -7,6 +7,7 @@ import csv
 import tempfile
 import zipfile
 import shutil
+import unittest
 from openpyxl import load_workbook
 from time import sleep
 from pyxform.builder import create_survey_from_xls
@@ -331,6 +332,7 @@ class TestExports(MainTestCase):
         self.assertEqual(sorted(['url', 'export_id', 'complete', 'filename']),
             sorted(content[0].keys()))
 
+    @unittest.expectedFailure  ## auto expert has been turned off
     def test_auto_export_if_none_exists(self):
         self._publish_transportation_form()
         self._submit_transport_instance()

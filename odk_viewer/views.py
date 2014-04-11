@@ -415,7 +415,11 @@ def export_list(request, username, id_string, export_type):
     context.xform = xform
     # TODO: better output e.g. Excel instead of XLS
     context.export_type = export_type
-    context.export_type_name = Export.EXPORT_TYPE_DICT[export_type]
+    try:
+        context.export_type_name = Export.EXPORT_TYPE_DICT[export_type]
+    except KeyError:
+        return HttpResponseBadRequest(
+                 _("%s is not a valid export type" % export_type))
     exports = Export.objects.filter(xform=xform, export_type=export_type)\
         .order_by('-created_on')
     context.exports = exports

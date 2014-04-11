@@ -30,7 +30,8 @@ class TestDataAPI(MainTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIsInstance(response.data, list)
         self.assertTrue(self.xform.surveys.count())
-        dataid = self.xform.surveys.all()[0].pk
+        qs = self.xform.surveys.all()
+        dataid = min([x.pk for x in qs])
 
         data = {
             u'_bamboo_dataset_id': u'',

@@ -1,9 +1,11 @@
+from __future__ import print_function
 import base64
 import os
 import re
 from tempfile import NamedTemporaryFile
 import urllib2
-
+import socket
+import unittest
 from cStringIO import StringIO
 
 from django.contrib.auth.models import User
@@ -58,7 +60,7 @@ class MainTestCase(TestCase):
     this_directory = os.path.dirname(__file__)
 
     def _publish_xls_file(self, path):
-        if not path.startswith('/%s/' % self.user.username):
+        if not (path.startswith('/%s/' % self.user.username) or path.startswith(self.this_directory)):
             path = os.path.join(self.this_directory, path)
         with open(path) as xls_file:
             post_data = {'xls_file': xls_file}
@@ -184,12 +186,12 @@ class MainTestCase(TestCase):
         try:
             urllib2.urlopen(url, timeout=timeout)
             return True
-        except urllib2.URLError:
-            pass
-        return False
+        except socket.timeout as e:   # starting with Python 2.7 does not return urllib2.URLError
+            raise unittest.SkipTest('Internet timeout attempting to contact "{}":{}'.format(url, str(e)))
+        except urllib2.URLError as e:
+            raise unittest.SkipTest('Internet trouble attempting to contact "{}":{}'.format(url, str(e)))
 
-    def _internet_on(self, url='http://74.125.113.99'):
-        # default value is some google IP
+    def _internet_on(self, url='http://www.google.com'):
         return self._check_url(url)
 
     def _set_auth_headers(self, username, password):

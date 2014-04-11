@@ -13,7 +13,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.files.storage import get_storage_class
 from django.core.mail import mail_admins
 from django.core.servers.basehttp import FileWrapper
-from django.db import IntegrityError
+from django.db import IntegrityError, DatabaseError
 from django.db import transaction
 from django.db.models.signals import pre_delete
 from django.http import HttpResponse, HttpResponseNotFound, \
@@ -265,9 +265,9 @@ def publish_form(callback):
     except (PyXFormError, XLSFormError) as e:
         return {
             'type': 'alert-error',
-            'text': e
+            'text': str(e)
         }
-    except IntegrityError as e:
+    except (IntegrityError, DatabaseError) as e:
         return {
             'type': 'alert-error',
             'text': _(u'Form with this id or SMS-keyword already exists.'),
@@ -282,7 +282,7 @@ def publish_form(callback):
         # form.publish returned None, not sure why...
         return {
             'type': 'alert-error',
-            'text': e
+            'text': str(e)
         }
     except ProcessTimedOut as e:
         # catch timeout errors
@@ -290,11 +290,11 @@ def publish_form(callback):
             'type': 'alert-error',
             'text': _(u'Form validation timeout, please try again.'),
         }
-    except Exception, e:
+    except Exception as e:
         # error in the XLS file; show an error to the user
         return {
             'type': 'alert-error',
-            'text': e
+            'text': str(e)
         }
 
 

@@ -53,6 +53,10 @@ def create_async_export(xform, export_type, query, force_xlsx, options=None):
         # start async export
         result = create_kml_export.apply_async(
             (), arguments, countdown=10)
+    elif export_type == Export.JSON_EXPORT:
+        print arguments
+        result = create_json_export.apply_async(
+                (), arguments, countdown=10)
     else:
         raise Export.ExportTypeError
     if result:
@@ -66,6 +70,31 @@ def create_async_export(xform, export_type, query, force_xlsx, options=None):
         return export, result
     return None
 
+@task()
+def create_json_export(username, id_string, export_id, query=None):
+    # we re-query the db instead of passing model objects according to
+    # http://docs.celeryproject.org/en/latest/userguide/tasks.html#state
+    export = Export.objects.get(id=export_id)
+    try:
+        # though export is not available when form has 0 submissions, we
+        # catch this since it potentially stops celery
+        gen_export = generate_export(
+            Export.JSON_EXPORT, 'json', username, id_string, export_id, query)
+    except (Exception, NoRecordsFoundError) as e:
+        export.internal_status = Export.FAILED
+        export.save()
+        # mail admins
+        details = {
+            'export_id': export_id,
+            'username': username,
+            'id_string': id_string
+        }
+        report_exception("JSON Export Exception: Export ID - "
+                         "%(export_id)s, /%(username)s/%(id_string)s"
+                         % details, e, sys.exc_info())
+        raise
+    else:
+        return gen_export.id
 
 @task()
 def create_xls_export(username, id_string, export_id, query=None,
@@ -76,7 +105,7 @@ def create_xls_export(username, id_string, export_id, query=None,
     ext = 'xls' if not force_xlsx else 'xlsx'
 
     export = Export.objects.get(id=export_id)
-    # though export is not available when for has 0 submissions, we
+    # though export is not available when form has 0 submissions, we
     # catch this since it potentially stops celery
     try:
         gen_export = generate_export(

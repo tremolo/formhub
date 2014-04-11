@@ -45,6 +45,7 @@ urlpatterns = patterns(
     url(r'^forms/$', 'main.views.form_gallery', name='forms_list'),
     url(r'^forms/(?P<uuid>[^/]+)$', 'main.views.show'),
     url(r'^people/$', 'main.views.members_list'),
+    url(r'^people/role', 'main.views.set_role', name='set_role'),
     url(r'^xls2xform/$', 'main.views.xls2xform'),
     url(r'^support/$', 'main.views.support'),
     url(r'^stats/$', 'staff.views.stats'),
@@ -57,7 +58,6 @@ urlpatterns = patterns(
     url(r'^(?P<username>[^/]+)/$', 'main.views.profile', name='user_profile'),
     url(r'^(?P<username>[^/]+)/profile$', 'main.views.public_profile', name='public_profile'),
     url(r'^(?P<username>[^/]+)/settings', 'main.views.profile_settings'),
-    url(r'^(?P<username>[^/]+)/role', 'main.views.set_role'),
     url(r'^(?P<username>[^/]+)/cloneform$', 'main.views.clone_xlsform'),
     url(r'^(?P<username>[^/]+)/activity$', 'main.views.activity'),
     url(r'^(?P<username>[^/]+)/activity/api$', 'main.views.activity_api'),
@@ -99,6 +99,7 @@ urlpatterns = patterns(
 
     # exporting stuff
     url(r"^(?P<username>\w+)/forms/(?P<id_string>[^/]+)/data\.csv$", 'odk_viewer.views.data_export', name='csv_export', kwargs={'export_type': 'csv'}),
+    url(r"^(?P<username>\w+)/forms/(?P<id_string>[^/]+)/data\.json$", 'odk_viewer.views.data_export', name='json_export', kwargs={'export_type': 'json'}),
     url(r"^(?P<username>\w+)/forms/(?P<id_string>[^/]+)/data\.xls", 'odk_viewer.views.data_export', name='xls_export', kwargs={'export_type': 'xls'}),
     url(r"^(?P<username>\w+)/forms/(?P<id_string>[^/]+)/data\.csv.zip", 'odk_viewer.views.data_export', name='csv_zip_export', kwargs={'export_type': 'csv_zip'}),
     url(r"^(?P<username>\w+)/forms/(?P<id_string>[^/]+)/data\.kml$", 'odk_viewer.views.kml_export'),

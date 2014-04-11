@@ -36,6 +36,7 @@ from django.core.exceptions import SuspiciousOperation
 
 from pymongo import MongoClient
 
+EHEALTH_AFRICA_OPTOMIZATIONS = True
 
 import djcelery
 djcelery.setup_loader()

@@ -53,7 +53,7 @@ class TestBriefcaseAPI(MainTestCase):
         submission_list_path = os.path.join(
             self.this_directory, 'fixtures', 'transportation',
             'view', 'submissionList.xml')
-        instances = Instance.objects.filter(xform=self.xform)
+        instances = Instance.objects.filter(xform=self.xform).order_by('date_created')
         self.assertTrue(instances.count() > 0)
         last_index = instances[instances.count() - 1].pk
         with codecs.open(submission_list_path, 'rb', encoding='utf-8') as f:
@@ -75,7 +75,7 @@ class TestBriefcaseAPI(MainTestCase):
         submission_list_path = os.path.join(
             self.this_directory, 'fixtures', 'transportation',
             'view', 'submissionList-4.xml')
-        instances = Instance.objects.filter(xform=self.xform)
+        instances = Instance.objects.filter(xform=self.xform).order_by('date_created')  # Postgres might change order
         self.assertTrue(instances.count() > 0)
         last_index = instances[instances.count() - 1].pk
         with codecs.open(submission_list_path, 'rb', encoding='utf-8') as f:
@@ -106,7 +106,7 @@ class TestBriefcaseAPI(MainTestCase):
 
     def test_view_submissionList_numEntries(self):
         def get_last_index(xform, last_index=None):
-            instances = Instance.objects.filter(xform=xform)
+            instances = Instance.objects.filter(xform=xform).order_by('date_created')
             if not last_index and instances.count():
                 return instances[instances.count() - 1].pk
             elif last_index:
@@ -120,7 +120,7 @@ class TestBriefcaseAPI(MainTestCase):
         self._make_submissions()
         params = {'formId': self.xform.id_string}
         params['numEntries'] = 2
-        instances = Instance.objects.filter(xform=self.xform)
+        instances = Instance.objects.filter(xform=self.xform).order_by('date_created')
         self.assertTrue(instances.count() > 1)
         last_index = instances[:2][1].pk
         last_expected_submission_list = ""

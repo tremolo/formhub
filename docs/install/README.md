@@ -86,7 +86,7 @@ $ sudo cp -ip postgresql.conf postgresql.conf.org
 
 Change the <tt>data_directory</tt> variable to point to the pgsql formhub data folder (i.e., <tt>/opt/data/formhub/pgsql</tt>).
 
-Unless you already have a valid [SSL certificate]() installed, turn off the <tt>ssl</tt> option:
+Unless you already have a valid [SSL certificate](https://help.ubuntu.com/12.04/serverguide/certificates-and-security.html) installed, turn off the <tt>ssl</tt> option:
 
 ```
 $ sudo vi postgresql.conf
@@ -110,7 +110,7 @@ $ /usr/lib/postgresql/9.1/bin/pg_ctl -D /opt/data/formhub/pgsql -l logfile start
 $ /usr/lib/postgresql/9.1/bin/createuser -P formhubDjangoApp
 ```
 
-Enter a password for the <tt>formhubDjangoApp</tt> database user. You will need this later, in the django <tt>settings.py</tt> configuration file.
+Enter a password for the <tt>formhubDjangoApp</tt> database user. You will need this later, for the in the django <tt>default_settings.py</tt> file.
 
 Say no (<tt>n</tt>) to the next series of permission questions:
 
@@ -140,9 +140,9 @@ Finally, turn postgres off, and exit the postgres account:
 $ /usr/lib/postgresql/9.1/bin/pg_ctl -D /opt/data/formhub/pgsql -l logfile stop
 $ exit
 ```
-Continue as the root or sudo user to edit the [pg_hba.conf](http://www.postgresql.org/docs/9.3/static/auth-pg-hba-conf.html) file for database access security.
+Continue as the root or sudo user to edit the <tt>pg_hba.conf</tt> file for database access security.
 
-As always, copy the existing configuration file first, before making any edits, then change line 90 from <tt>peer</tt> to <tt>md5</tt> (for more about these options, see the [pg_hba.conf](http://www.postgresql.org/docs/9.3/static/auth-pg-hba-conf.html) file docs): 
+As always, copy the existing configuration file first, before making any edits, then change line 90 from <tt>peer</tt> to <tt>md5</tt> (for more about these options, see the [pg_hba.conf](http://www.postgresql.org/docs/9.3/static/auth-pg-hba-conf.html) file documentation): 
 
 ```
 $ cd /etc/postgresql/9.1/main
@@ -169,11 +169,13 @@ If your configurations are correct, you should be prompted for a password, like 
 Password for user formhubDjangoApp: 
 ```
 
-You can either input the password you used to create the <tt>formhubDjangoApp</tt> user earlier, the <tt>\q</tt> to exit, or just <tt>Control-C</tt> to quit.
+You can either input the password you used to create the <tt>formhubDjangoApp</tt> user earlier, then type <tt>\q</tt> to exit, or just <tt>Control-C</tt> to quit.
 
-*Phew!* That was a lot of work, but your databases are ready, and you won't have to touch these settings again, even if you have to reboot or restart the server later.
+*Phew!* 
 
-## 5. Install the formhub repository as user <tt>fhuser</tt>
+That was a lot of work, but your databases are ready, and you won't have to touch these settings again, even if you have to reboot or restart the server later.
+
+## 5. Install formhub 
 
 Switch to the <tt>fhuser</tt> account and make sure you are in the home folder of the correct account:
 
@@ -185,10 +187,120 @@ $ whoami
 
 You should see <tt>/home/fhuser</tt> as the result of the <tt>pwd</tt> command, and <tt>fhuser</tt> as the result of <tt>whoami</tt>. 
 
-Next, obtain the [formhub source](https://github.com/SEL-Columbia/formhub.git) from [github](https://github.com/):
+Obtain the [formhub source](https://github.com/SEL-Columbia/formhub.git) from [github](https://github.com/):
 
 ```
 $ git clone https://github.com/SEL-Columbia/formhub.git
 ```
+
+Next, edit the <tt>default_settings.py</tt> file in <tt>/home/fhuser/formhub/formhub/preset</tt> (you can use [vim](https://wiki.debian.org/vim), [nano](http://www.nano-editor.org/dist/v1.2/faq.html), or any other [text editor](https://wiki.debian.org/TextEditor)) and change the database user password in line 21 from <tt>foo</tt> to the password you created earlier for the <tt>formhubDjangoApp</tt> user:
+
+```
+DATABASES['default']['PASSWORD'] = 'Your Password Goes here'
+```
+
+Then set the required environment variables for formhub by adding these two lines to the end of the <tt>/home/fhuser/.profile</tt> file:
+
+```
+export PYTHONPATH=$PYTHONPATH:/home/fhuser/formhub/formhub
+export DJANGO_SETTINGS_MODULE=formhub.preset.default_settings
+```
+
+Apply the changes to the environment by sourcing the updated file:
+
+```
+$ source ~/.profile
+```
+
+To confirm the environment settings are correct, run django's [validate](https://docs.djangoproject.com/en/1.5/ref/django-admin/#validate) command from inside the formhub folder:
+
+```
+$ cd ~/formhub
+$ python manage.py validate
+```
+
+If everything is ok, you should see this:
+
+```
+Your environment is:"formhub.preset.default_settings"
+0 errors found
+```
+
+Now you are ready to install the formhub data models into the database:
+
+```
+$ cd ~/formhub
+$ python manage.py syncdb --noinput
+$ python manage.py migrate
+```
+
+## 6. Install [celery](http://celeryproject.org/) as a daemon
+
+Copy the celery scripts into <tt>/etc/init.d</tt> and <tt>/etc/default</tt> as the root user in debian or with the sudo command in ubuntu, and set their run permissions accordingly:
+
+```
+$ sudo cp -ip /home/fhuser/formhub/extras/celeryd/etc/init.d/celeryd /etc/init.d/celeryd
+$ sudo cp -ip /home/fhuser/formhub/extras/celeryd/etc/default/celeryd /etc/default/celeryd
+$ sudo chmod 755 /etc/init.d/celeryd
+$ sudo chown root:root /etc/init.d/celeryd
+```
+
+Switch back to the <tt>fhuser</tt> account, and confirm that you can start celery as a daemon process:
+
+```
+$ /etc/init.d/celeryd start
+```
+
+If successful, you should see:
+
+```
+Your environment is:"formhub.preset.default_settings"
+celeryd-multi v3.0.23 (Chiastic Slide)
+> Starting nodes...
+	> w1.: Your environment is:"formhub.preset.default_settings"
+OK
+```
+
+Finally, use [insserv](https://wiki.debian.org/LSBInitScripts/DependencyBasedBoot) (or [upstart](http://upstart.ubuntu.com/cookbook/) in ubuntu, depending on your version) to have the celery daemon start automatically on boot:
+
+```
+sudo /sbin/insserv celeryd
+```
+
+## 7. Start the server
+
+Now, you should be ready to bring up the server as user <tt>fhuser</tt> with django's [built-in web server](https://docs.djangoproject.com/en/1.5/ref/django-admin/#runserver-port-or-address-port): 
+
+```
+$ cd ~/formhub
+$ python manage.py runserver
+```
+
+You should see this response from the terminal:
+
+```
+Your environment is:"formhub.preset.default_settings"
+Validating models...
+
+0 errors found
+April 28, 2014 - 16:26:42
+Django version 1.5.6, using settings 'formhub.preset.default_settings'
+Development server is running at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+```
+
+Open a web browser and visit <tt>http://127.0.0.1:8000/</tt> while the server is running and you should see the formhub home page.
+
+*Great success!*
+
+If you are doing some small-scale experiments in your own environment, then you are done.
+
+If, however, you wish to host your own instance of formhub on a public server, or on a public server with your own domain or subdomain (for example, <tt>http://formhub.example.org/</tt>), then you'll need to deploy django [with wsgi](https://docs.djangoproject.com/en/1.5/howto/deployment/wsgi/) behind a full webserver, as described in the optional steps, below.
+
+## *Optional Steps*
+
+## 8. Deploy Django with WSGI 
+
+## 9. Configure Django with WSGI to run behind a full web server
 
 

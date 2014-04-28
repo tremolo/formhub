@@ -13,7 +13,20 @@
 
 from formhub.settings import *
 
-# in this example we are supplementing the django database
+# For this example configuration, we are running the server in
+# debug mode, but this should be changed to False for a server
+# in production (changing the value of DEBUG also requires that
+# ALLOWED_HOSTS, below, be defined as well)
+
+DEBUG = True
+
+# Hosts/domain names that are valid for this site
+# This is required if DEBUG is False, otherwise the server 
+# will respond with 500 errors:
+# https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
+#ALLOWED_HOSTS = ['.example.com']
+
+# In this example we are supplementing the django database
 # definition found in the ../settings.py file with a password
 # (normally we wouldn't check this into source control, but this
 #  is here just for illustration, as an example of what's possible)
@@ -23,7 +36,7 @@ DATABASES['default']['PASSWORD'] = 'foo'
 # is to define the db password as an environment variable:
 #DATABASES['default']['PASSWORD'] = os.environ['FORMHUB_DB_PWD']
 
-# examples of other over-rides you could do here:
+# Examples of other over-rides you could do here:
 
 DATABASE_ROUTERS = [] # turn off second database
 

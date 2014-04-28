@@ -11,16 +11,21 @@
 # and 3rd party private keys, etc., should perhaps be omitted using
 # .gitignore
 
-from settings import *
+from formhub.settings import *
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'FormhubDjangoDB',
-        'USER': 'formhubDjangoApp',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '',                      # Set to empty string for default.
-    }
-}
+# in this example we are supplementing the django database
+# definition found in the ../settings.py file with a password
+# (normally we wouldn't check this into source control, but this
+#  is here just for illustration, as an example of what's possible)
 
+DATABASES['default']['PASSWORD'] = 'foo'
+# an alternative to hard-coding the password string
+# is to define the db password as an environment variable:
+#DATABASES['default']['PASSWORD'] = os.environ['FORMHUB_DB_PWD']
+
+# examples of other over-rides you could do here:
+
+DATABASE_ROUTERS = [] # turn off second database
+
+# Make a unique unique key just for testing, and don't share it with anybody.
+SECRET_KEY = 'mlfs33^s1l4xf6a36$0#j%dd*sisfoi&)&4s-v=91#^l01v)*j'

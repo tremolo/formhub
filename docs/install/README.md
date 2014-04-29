@@ -193,10 +193,16 @@ Obtain the [formhub source](https://github.com/SEL-Columbia/formhub.git) from [g
 $ git clone https://github.com/SEL-Columbia/formhub.git
 ```
 
+As root or sudo, install the python packages required for formhub:
+
+```
+$ sudo pip install -r /home/fhuser/formhub/requirements.pip
+```
+
 Next, edit the <tt>default_settings.py</tt> file in <tt>/home/fhuser/formhub/formhub/preset</tt> (you can use [vim](https://wiki.debian.org/vim), [nano](http://www.nano-editor.org/dist/v1.2/faq.html), or any other [text editor](https://wiki.debian.org/TextEditor)) and change the database user password in line 21 from <tt>foo</tt> to the password you created earlier for the <tt>formhubDjangoApp</tt> user:
 
 ```
-DATABASES['default']['PASSWORD'] = 'Your Password Goes here'
+DATABASES['default']['PASSWORD'] = 'foo' # put your password here
 ```
 
 Then set the required environment variables for formhub by adding these two lines to the end of the <tt>/home/fhuser/.profile</tt> file:
@@ -299,8 +305,101 @@ If, however, you wish to host your own instance of formhub on a public server, o
 
 ## *Optional Steps*
 
-## 8. Deploy Django with WSGI 
+## 8. Deploy Django with WSGI to run behind a full web server
 
-## 9. Configure Django with WSGI to run behind a full web server
+While there are several [WSGI](http://www.wsgi.org/) applications available, using [uWSGI](http://projects.unbit.it/uwsgi/) is recommended. [Installation](http://uwsgi-docs.readthedocs.org/en/latest/Install.html) is simple:
 
+```
+$ sudo pip install uwsgi
+```
 
+Next, create the log folder and make it accessible for the <tt>fhuser</tt>:
+
+```
+$ sudo mkdir /var/log/uwsgi
+$ sudo chmod 755 /var/log/uwsgi
+$ sudo chown fhuser:fhuser /var/log/uwsgi
+```
+
+Install the <tt>formhub-uwsgi</tt> startup script so that uWSGI will start automatically on boot:
+
+```
+$ cd /etc/init.d
+$ sudo cp -ip /home/fhuser/formhub/extras/formhub-uwsgi .
+$ sudo /sbin/insserv formhub-uwsgi
+$ sudo /etc/init.d/formhub-uwsgi start
+```
+
+Going forward, you can use <tt>/etc/init.d/formhub-uwsgi start|stop|restart</tt> to control uWSGI.
+
+The uWSGI server writes to a log file named <tt>/var/log/uwsgi/formhub.log</tt> which you can read using  [head, tail, less](http://www.tldp.org/LDP/GNU-Linux-Tools-Summary/html/x6546.htm), etc.
+
+This guide will use [nginx](http://nginx.org/) as the web server to use in conjection with uWSGI and Django.
+
+Following the [ngnix installation instructions](http://nginx.org/en/linux_packages.html#stable), download the nginx signing key and update the package manager's source list.
+
+This particular example is for Debian 7 (codename *wheezy*):
+
+```
+$ cd /opt
+$ sudo mkdir -p downloads/nginx
+$ cd downloads/nginx
+$ sudo wget http://nginx.org/keys/nginx_signing.key
+$ sudo apt-key add nginx_signing.key
+$ cd /etc/apt
+$ sudo cp -ip sources.list sources.list.org
+$ sudo vi sources.list
+$ diff sources.list.org sources.list
+# (after editing the sources.list file)
+15a16,19
+> 
+> # nginx
+> deb http://nginx.org/packages/debian/ wheezy nginx
+> deb-src http://nginx.org/packages/debian/ wheezy nginx
+$ sudo apt-get update; apt-get install -y nginx
+```
+
+You should be able to see the nginx server running by visiting <tt>http://127.0.0.1</tt> in a web browser.
+
+There should be a notice that says:
+
+> Welcome to nginx!
+> 
+> If you see this page, the nginx web server is successfully installed and working. Further configuration is required.
+
+Finally, configure nginx to send all the Django requests to the uWSGI server and confirm they are correct:
+
+```
+$ cd /etc/nginx/conf.d
+$ sudo mv default.conf default.conf.org
+$ sudo ln -s /home/fhuser/formhub/extras/nginx-default.conf default.conf
+$ sudo /etc/init.d/nginx configtest
+```
+
+If everything is ok, nginx will respond with:
+
+```
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+```
+
+Now restart nginx with <tt>sudo /etc/init.d/nginx restart</tt> and revisit <tt>http://127.0.0.1</tt> in a web browser.
+
+Behold formhub in all its glory.
+
+## 9. Install Development Tools
+
+If you plan to do any development work on formhub, either to contribute code back to this repository, or do some hacking on your own, you should also install the <tt>requirements-dev.pip</tt> packages via pip:
+
+```
+$ sudo pip install -r /home/fhuser/formhub/requirements-dev.pip
+```
+
+## 10. Install Tools for [Amazon cloud services](http://aws.amazon.com/) (AWS)
+
+If you plan to use AWS for your formhub server, you should also install the corresponding packages via pip:
+
+```
+$ sudo pip install -r /home/fhuser/formhub/equirements-s3.pip  
+$ sudo pip install -r /home/fhuser/formhub/requirements-ses.pip
+```

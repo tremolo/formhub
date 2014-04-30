@@ -268,7 +268,6 @@ Copy the celery scripts into <tt>/etc/init.d</tt> and <tt>/etc/default</tt> as t
 $ sudo cp -ip /home/fhuser/formhub/extras/celeryd/etc/init.d/celeryd /etc/init.d/celeryd
 $ sudo cp -ip /home/fhuser/formhub/extras/celeryd/etc/default/celeryd /etc/default/celeryd
 $ sudo chmod 755 /etc/init.d/celeryd
-$ sudo chown root:root /etc/init.d/celeryd
 ```
 
 Switch back to the <tt>fhuser</tt> account, and confirm that you can start celery as a daemon process:

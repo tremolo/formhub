@@ -193,6 +193,26 @@ Obtain the [formhub source](https://github.com/SEL-Columbia/formhub.git) from [g
 $ git clone https://github.com/SEL-Columbia/formhub.git
 ```
 
+*If you are using this guide before this branch (<tt>slim_dedicated_server</tt>) has been merged into the formhub master branch, then you will need to use [git's checkout](http://csurs.csr.uky.edu/cgi-bin/man/man2html?1+git-checkout) command first, as follows:*
+
+```
+$ cd ~/formhub
+$ git checkout slim_dedicated_server
+```
+
+*Then confirm you are on the correct branch, before continuing:*
+
+```
+$ git branch
+```
+
+*You should see <tt>slim_dedicated_server</tt> marked with an asterisk, like this:*
+
+```
+  master
+* slim_dedicated_server
+```
+
 As root or sudo, install the python packages required for formhub:
 
 ```

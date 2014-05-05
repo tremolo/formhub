@@ -44,7 +44,7 @@ do_stop()
 # Function that sends a SIGHUP to the daemon/service
 #
 do_reload() {
-    uwsgi --stop /tmp/formhub-master.pid
+    uwsgi --reload /tmp/formhub-master.pid
     return 0
 }
 

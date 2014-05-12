@@ -51,12 +51,6 @@ $ sudo apt-get update
 $ sudo apt-get install mongodb-org 
 ```
 
-*As of this writing the <tt>apt-get install mongodb-org</tt> command on debian results in a 404 / not found error (the files for version 2.6.1 files are not present in http://downloads-distro.mongodb.org/repo/debian-sysvinit for whatever reason), so you may need to specify the prior stable version like this:*
-
-```
-$ sudo apt-get install mongodb-org=2.6.0 mongodb-org-server=2.6.0 mongodb-org-shell=2.6.0 mongodb-org-mongos=2.6.0 mongodb-org-tools=2.6.0
-```
-
 ## 4. Install [PostgreSQL](http://www.postgresql.org/)
 
 *Prior versions of formhub used [MySQL](https://www.mysql.com/), and while it is technically possible to use it instead, PostgreSQL is strongly recommended. Using PostgreSQL from the start will also make following the future [technical roadmap](../roadmap/README.md) simpler.*

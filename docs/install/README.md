@@ -413,6 +413,6 @@ $ sudo pip install -r /home/fhuser/formhub/requirements-dev.pip
 If you plan to use AWS for your formhub server, you should also install the corresponding packages via pip:
 
 ```
-$ sudo pip install -r /home/fhuser/formhub/equirements-s3.pip  
+$ sudo pip install -r /home/fhuser/formhub/requirements-s3.pip  
 $ sudo pip install -r /home/fhuser/formhub/requirements-ses.pip
 ```

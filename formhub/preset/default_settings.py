@@ -26,6 +26,16 @@ DEBUG = True
 # https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 #ALLOWED_HOSTS = ['.example.com']
 
+# These are necessary for running on Amazon Web Services (AWS)
+# because basic formhub/django functions which rely on email,
+# such as new account registration, will fail
+
+AWS_ACCESS_KEY_ID     = '' # find these in your AWS console
+AWS_SECRET_ACCESS_KEY = ''
+EMAIL_BACKEND = 'django_ses.SESBackend'
+DEFAULT_FROM_EMAIL = '' # e.g., 'no-reply@example.com'
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
 # In this example we are supplementing the django database
 # definition found in the ../settings.py file with a password
 # (normally we wouldn't check this into source control, but this

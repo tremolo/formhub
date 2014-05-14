@@ -4,8 +4,7 @@ from odk_logger.models import XForm
 
 class FormAdmin(admin.ModelAdmin):
 
-    exclude = ('user',)
-    list_display = ('id_string', 'form_active', 'shared')
+    list_display = ('id_string', 'user', 'form_active', 'shared')
 
     # A user should only see forms that belong to him.
     def queryset(self, request):

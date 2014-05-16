@@ -246,7 +246,7 @@ def submission(request, username=None):
             return OpenRosaResponseBadRequest(_(u"Username or ID required."))
         except IsNotCrowdformError:
             return OpenRosaResponseNotAllowed(
-                _(u"Sorry but the crowd form you submitted to is closed.")
+                _(u"Sorry but the form you submitted is not a crowd form.")
             )
         except InstanceEmptyError:
             return OpenRosaResponseBadRequest(

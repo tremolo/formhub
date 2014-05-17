@@ -244,8 +244,11 @@ def members_list(request):
     users = User.objects.all()
     context.template = 'people.html'
     context.users = users
-    for user in context.users:
-        user.permissions_form = RoleForm(role=user.profile.role)
+    # for user in context.users:
+    #     try:
+    #         user.permissions_form = RoleForm(role=user.profile.role)
+    #     except User.DoesNotExist:
+    #         pass
     return render_to_response("people.html", context_instance=context)
 
 

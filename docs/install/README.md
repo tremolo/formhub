@@ -1,6 +1,8 @@
 # Installation Guide
 
-*This document describes how to install and run formhub as a dedicated server image. If you wish to run it on a shared computer, the use of a virtualized environment, such as [VirtualBox](https://www.virtualbox.org/) is recommended. Using either [debian](http://www.debian.org/) or [ubuntu](http://www.ubuntu.com/) for the operating system (OS) is recommended. If you choose a different server OS, you will need to replace the [apt-get](https://help.ubuntu.com/community/AptGet/Howto) command with the one corresponding to your system's package manager.*
+*This document describes how to install formhub from source, and run it as a dedicated server image. If you wish to run it on a shared computer, the use of a virtualized environment, such as [VirtualBox](https://www.virtualbox.org/) is recommended. Using either [debian](http://www.debian.org/) or [ubuntu](http://www.ubuntu.com/) for the operating system (OS) is recommended. If you choose a different server OS, you will need to replace the [apt-get](https://help.ubuntu.com/community/AptGet/Howto) command with the one corresponding to your system's package manager.*
+
+*As an alternative to installing from source, you can just use the public Formhub Amazon Machine Image (AMI) to [Run Your Own Formhub Instances on Amazon Web Services (AWS)](https://github.com/SEL-Columbia/formhub/wiki/How-To-Run-Your-Own-Formhub-Instances-on-Amazon-Web-Services) instead.*
 
 ## *Required Steps*
 
@@ -53,7 +55,7 @@ $ sudo apt-get install mongodb-org
 
 ## 4. Install [PostgreSQL](http://www.postgresql.org/)
 
-*Prior versions of formhub used [MySQL](https://www.mysql.com/), and while it is technically possible to use it instead, PostgreSQL is strongly recommended. Using PostgreSQL from the start will also make following the future [technical roadmap](../roadmap/README.md) simpler.*
+*Prior versions of formhub used [MySQL](https://www.mysql.com/), and while it is technically possible to use it instead, PostgreSQL is strongly recommended.*
 
 Install the required packages and libraries:
 
@@ -410,9 +412,20 @@ $ sudo pip install -r /home/fhuser/formhub/requirements-dev.pip
 
 ## 10. Install Tools for [Amazon cloud services](http://aws.amazon.com/) (AWS)
 
-If you plan to use AWS for your formhub server, you should also install the corresponding packages via pip:
+If you plan to use AWS for your formhub server, you should consider [using the public Formhub Amazon Machine Image (AMI)](https://github.com/SEL-Columbia/formhub/wiki/How-To-Run-Your-Own-Formhub-Instances-on-Amazon-Web-Services) instead, but if you would really do all this from scratch, you should also install the corresponding packages via pip:
 
 ```
 $ sudo pip install -r /home/fhuser/formhub/requirements-s3.pip  
 $ sudo pip install -r /home/fhuser/formhub/requirements-ses.pip
+```
+
+Also note that the celery daemon will *not* start properly on AWS instances, even if you have executed the <tt>sudo /sbin/insserv celeryd</tt> command, earlier.
+
+Instead, add this line to your instance's <tt>/etc/rc.local</tt> file, just above the last line (i.e., <tt>exit 0</tt>), like this:
+
+```
+# By default this script does nothing.
+
+/etc/init.d/celeryd start 
+exit 0
 ```

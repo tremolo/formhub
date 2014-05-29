@@ -6,13 +6,13 @@ Getting Started
 
 * To build and install from source, follow the `Installation Guide <docs/install/README.md>`_
 
-* Alternatively, you can just use the public Formhub Amazon Machine Image (AMI) to `Run Your Own Formhub Instances on Amazon Web Services (AWS) <wiki/How-To-Run-Your-Own-Formhub-Instances-on-Amazon-Web-Services>`_
+* Alternatively, you can just use the public Formhub Amazon Machine Image (AMI) to `Run Your Own Formhub Instances on Amazon Web Services (AWS) <https://github.com/SEL-Columbia/formhub/wiki/How-To-Run-Your-Own-Formhub-Instances-on-Amazon-Web-Services>`_
 
 Contributing
 ------------
 
 If you would like to contribute code please read
-`Contributing Code to Formhub <https://github.com/modilabs/formhub/wiki/Contributing-Code-to-Formhub>`_.
+`Contributing Code to Formhub <https://github.com/SEL-Columbia/formhub/wiki/Contributing-Code-to-Formhub>`_.
 
 Code Structure
 --------------

@@ -1,12 +1,12 @@
 Formhub
 =======
 
-.. image:: https://secure.travis-ci.org/modilabs/formhub.png?branch=master
-  :target: http://travis-ci.org/modilabs/formhub
+Getting Started
+---------------
 
-Installation
-------------
-Please read the `Installation and Deployment Guide <https://github.com/modilabs/formhub/wiki/Installation-and-Deployment>`_.
+* To build and install from source, follow the `Installation Guide <docs/install/README.md>`_
+
+* Alternatively, you can just use the public Formhub Amazon Machine Image (AMI) to `Run Your Own Formhub Instances on Amazon Web Services (AWS) <wiki/How-To-Run-Your-Own-Formhub-Instances-on-Amazon-Web-Services>`_
 
 Contributing
 ------------
@@ -16,6 +16,12 @@ If you would like to contribute code please read
 
 Code Structure
 --------------
+
+Formhub is written in `Python <https://www.python.org/>`_, using the `Django Web Framework <https://www.djangoproject.com/>`_. 
+
+In Django terms, an "app" is a bundle of Django code, including models and views, that lives together in a single Python package and represents a full Django application.
+
+Formhub consists of three Django apps:
 
 * odk_logger - This app serves XForms to ODK Collect and receives
   submissions from ODK Collect. This is a stand alone application.
@@ -28,10 +34,14 @@ Code Structure
 * main - This app is the glue that brings odk_logger and odk_viewer
   together.
 
-Localization
-------------
+Internationalization and Localization
+-------------------------------------
 
-To generate a locale from scratch (ex. Spanish)
+Formhub can be presented in specific languages and formats, customized for specific audiences.
+
+These examples were derived from `Django's Internationalization and Localization Documentation <https://docs.djangoproject.com/en/dev/topics/i18n/>`_ and there is also a good explanation in `The Django Book's Chapter on Internationalization <http://www.djangobook.com/en/2.0/chapter19.html>`_.
+
+To generate a locale from scratch, e.g. Spanish:
 
 .. code-block:: sh
 

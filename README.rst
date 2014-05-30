@@ -6,7 +6,11 @@ Getting Started
 
 * To build and install from source, follow the `Installation Guide <docs/install/README.md>`_
 
-* Alternatively, you can just use the public Formhub Amazon Machine Image (AMI) to `Run Your Own Formhub Instances on Amazon Web Services (AWS) <https://github.com/SEL-Columbia/formhub/wiki/How-To-Run-Your-Own-Formhub-Instances-on-Amazon-Web-Services>`_
+* Alternatively, you can just use these pre-built server images instead:
+
+  * The public Formhub Amazon Machine Image (AMI) to `Run Your Own Formhub Instances on Amazon Web Services (AWS) <https://github.com/SEL-Columbia/formhub/wiki/How-To-Run-Your-Own-Formhub-Instances-on-Amazon-Web-Services>`_
+
+  * The public Formhub Virtual Disk Image (VDI) to `Run Your Own Formhub Instances on VirtualBox <https://github.com/SEL-Columbia/formhub/wiki/How-To-Run-Your-Own-Formhub-Virtual-Machines-on-VirtualBox>`_
 
 Contributing
 ------------

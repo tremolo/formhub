@@ -2,7 +2,11 @@
 
 *This document describes how to install formhub from source, and run it as a dedicated server image. If you wish to run it on a shared computer, the use of a virtualized environment, such as [VirtualBox](https://www.virtualbox.org/) is recommended. Using either [debian](http://www.debian.org/) or [ubuntu](http://www.ubuntu.com/) for the operating system (OS) is recommended. If you choose a different server OS, you will need to replace the [apt-get](https://help.ubuntu.com/community/AptGet/Howto) command with the one corresponding to your system's package manager.*
 
-*As an alternative to installing from source, you can just use the public Formhub Amazon Machine Image (AMI) to [Run Your Own Formhub Instances on Amazon Web Services (AWS)](https://github.com/SEL-Columbia/formhub/wiki/How-To-Run-Your-Own-Formhub-Instances-on-Amazon-Web-Services) instead.*
+*As an alternative to installing from source, you can just use these pre-built server images instead:*
+
+* The public Formhub Amazon Machine Image (AMI) to [Run Your Own Formhub Instances on Amazon Web Services (AWS)](https://github.com/SEL-Columbia/formhub/wiki/How-To-Run-Your-Own-Formhub-Instances-on-Amazon-Web-Services)
+
+* The public Formhub Virtual Disk Image (VDI) to [Run Your Own Formhub Instances on VirtualBox](https://github.com/SEL-Columbia/formhub/wiki/How-To-Run-Your-Own-Formhub-Virtual-Machines-on-VirtualBox)
 
 ## *Required Steps*
 

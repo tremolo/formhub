@@ -13,6 +13,7 @@ from pyxform.question import Question
 from django.core.files.base import File
 from django.core.files.temp import NamedTemporaryFile
 from django.core.files.storage import get_storage_class
+from django.core import serializers
 from django.contrib.auth.models import User
 from django.shortcuts import render_to_response
 from odk_logger.models import XForm, Attachment
@@ -371,11 +372,13 @@ class ExportBuilder(object):
         from odk_viewer.models import DataDictionary, ParsedInstance
         username = args[0]
         form_id_string = args[1]
+        JSON_Serializer = serializers.get_serializer("json")
+        json_serializer = JSON_Serializer()
         pis = ParsedInstance.objects.filter(instance__user__username=username,
                                         instance__xform__id_string=form_id_string)
-        json_dump = [x.to_dict() for x in pis]
         with open(path, 'w') as outfile:
-            json.dump(json_dump, outfile)
+            json_serializer.serialize(pis, stream=outfile)
+
 
     def to_zipped_csv(self, path, data, *args):
         def encode_if_str(row, key):
@@ -601,6 +604,7 @@ def generate_export(export_type, extension, username, id_string,
         export_type,
         filename)
 
+
     # TODO: if s3 storage, make private - how will we protect local storage??
     storage = get_storage_class()()
     # seek to the beginning as required by storage classes
@@ -609,7 +613,7 @@ def generate_export(export_type, extension, username, id_string,
         file_path,
         File(temp_file, file_path))
     temp_file.close()
-
+    print('Creating file={}'.format(os.path.abspath(export_filename)))
     dir_name, basename = os.path.split(export_filename)
     
     # get or create export object

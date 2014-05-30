@@ -67,3 +67,4 @@ if PRINT_EXCEPTION and DEBUG:
 # Clear out the test database
 if TESTING_MODE:
     MONGO_DB.instances.drop()
+CELERY_ALWAYS_EAGER=True

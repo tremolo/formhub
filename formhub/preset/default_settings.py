@@ -36,6 +36,15 @@ EMAIL_BACKEND = 'django_ses.SESBackend'
 DEFAULT_FROM_EMAIL = '' # e.g., 'no-reply@example.com'
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
+# Uncomment the following three lines if you are using
+# an AWS S3 Bucket as the default file store, and define
+# your bucket name in the AWS_STORAGE_BUCKET_NAME variable.
+# This it is optional, but strongly recommended.
+
+#DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+#AWS_STORAGE_BUCKET_NAME = '' # use your S3 Bucket name here
+#AWS_DEFAULT_ACL = 'private'
+
 # In this example we are supplementing the django database
 # definition found in the ../settings.py file with a password
 # (normally we wouldn't check this into source control, but this

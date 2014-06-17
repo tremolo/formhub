@@ -452,12 +452,13 @@ function parseLanguages(children)
           </div>
 <script type="text/javascript" charset="utf-8" src="/static/js/instance.js"></script>
 <script type="text/javascript">
-$('#loading')
-    .ajaxStart(function() {
-        $(this).show();
-    })
-    .ajaxStop(function() {
-        $(this).hide();
+
+$( document ).ajaxStart(function() {
+    	$('#loading').show();
+    });
+    
+ $( document ).ajaxStop(function() {
+    	$('#loading').hide();
     });
 </script>
 {% endblock %}

@@ -51,7 +51,7 @@
         </td>
         <td class="centered">{{ submission_count|intcomma }}</td>
         <td class="centered">
-                <a class="btn {% if user.profile.role < 10 and user.id != xform.user.id %}disabled{% endif %}" href="{% url "odk_logger.views.enter_data" xform.user.username xform.id_string %}"><i class="icon-edit"></i> {% trans "Web" %}</a>
+                <a class="btn {% if user.profile.role < 10 and user.id != xform.user.id %}disabled{% endif %}" target="_blank" href="{% url "odk_logger.views.enter_data" xform.user.username xform.id_string %}"><i class="icon-edit"></i> {% trans "Web" %}</a>
                 <a data-toggle="modal" data-target="#popupmodal" class="showqr btn {% if user.profile.role < 10 and user.id != xform.user.id %}disabled{% endif %}" href="{% url "get_qrcode" xform.user.username xform.id_string %}"><i class="icon-tablet"></i> {% trans "Mobile" %}</a>
         </td>
         <td class="centered">

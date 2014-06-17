@@ -189,7 +189,7 @@ def create_instance(username, xml_file, media_files,
         # commit all changes
         transaction.commit()
         return instance
-    except Exception:
+    except Exception, e:
         transaction.rollback()
         raise
     return None

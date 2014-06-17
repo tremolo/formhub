@@ -11,7 +11,7 @@
     <div class="span5">
         <h1>{% blocktrans %}Publish a Form <small>Upload XLSForm</small>{% endblocktrans %}</h1>
         {% url "tutorial" as tutorial_url %}
-        {% blocktrans %}For a quick introduction on how to publish a form check out the <a href="{{ tutorial_url }}">tutorial</a>, and try publishing <a href="http://formhub.org/formhub_u/forms/tutorial/form.xls">tutorial.xls</a>.{% endblocktrans %}
+        {% blocktrans %}For a quick introduction on how to publish a form check out the <a href="{{ tutorial_url }}">tutorial</a>, and try publishing <a href="{{ STATIC_URL }}tutorial/tutorial.xls">tutorial.xls</a>.{% endblocktrans %}
         <br/>
         <br/>
         {% url "syntax" as syntax_url %}

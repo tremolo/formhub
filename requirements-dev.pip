@@ -5,3 +5,4 @@ statsd
 django-statsd-mozilla
 gunicorn
 fabric
+django_nose

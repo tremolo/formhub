@@ -52,6 +52,7 @@ from sms_support.providers import providers_doc
 from registration.signals import user_registered
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
+from django.template.defaultfilters import urlencode
 
 
 @receiver(user_registered, dispatch_uid='auto_add_crowdform')
@@ -908,7 +909,7 @@ def form_photos(request, username, id_string):
 
             for i in ['small', 'medium', 'large', 'original']:
                 url = reverse(attachment_url, kwargs={'size': i})
-                url = '%s?media_file=%s' % (url, attachment.media_file.name)
+                url = '%s?media_file=%s' % (url, urlencode(attachment.media_file.name))
                 data[i] = url
 
             image_urls.append(data)

@@ -39,6 +39,7 @@ from utils.viewer_tools import export_def_from_filename
 from utils.viewer_tools import create_attachments_zipfile
 from utils.log import audit_log, Actions
 from common_tags import SUBMISSION_TIME
+from odk_logger.models.instance import Instance
 
 
 def encode(time_str):
@@ -695,13 +696,20 @@ def data_view(request, username, id_string):
 
 
 def attachment_url(request, size='medium'):
-    media_file = request.GET.get('media_file')
+    media_file = request.GET.get('media_file').split("?")[0]
     # TODO: how to make sure we have the right media file,
     # this assumes duplicates are the same file
     result = Attachment.objects.filter(media_file=media_file)[0:1]
     if result.count() == 0:
-        return HttpResponseNotFound(_(u'Attachment not found'))
+        
+        if "instance" in request.GET.keys():
+            instance = Instance.objects.filter(uuid=request.GET.get('instance'))
+            result = Attachment.objects.filter(instance=instance, original_name=media_file.split("/")[-1])[0:1]
+            if result.count() == 0:
+                return HttpResponseNotFound(_(u'Attachment not found'))
+            
     attachment = result[0]
+
     if not attachment.mimetype.startswith('image'):
         return redirect(attachment.media_file.url)
     try:

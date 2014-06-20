@@ -271,9 +271,13 @@ function updatePrevNextControls(data)
             });
 }
 
-function _attachment_url(name, size)
+function _attachment_url(name, size, instance)
 {
-    return '{% url "odk_viewer.views.attachment_url" %}' + size + '?media_file=' + '{{ username }}/attachments/' + name;
+	if (instance){
+	    return '{% url "odk_viewer.views.attachment_url" %}' + size + '?media_file=' + '{{ username }}/attachments/' + name + '&instance='+ instance;
+	}else{
+	    return '{% url "odk_viewer.views.attachment_url" %}' + size + '?media_file=' + '{{ username }}/attachments/' + name;
+	}
 }
 
 function reDraw(context, data)
@@ -290,16 +294,17 @@ function reDraw(context, data)
             // check if its an image, audio or video and create thumbs or links to
             if(questions.hasOwnProperty(cleanKey))
             {
-                if(questions[cleanKey].type == 'image' || questions[cleanKey].type == 'photo')
+                var uuid = data['_uuid'];
+            	if(questions[cleanKey].type == 'image' || questions[cleanKey].type == 'photo')
                 {
-                    var src = _attachment_url(value, 'small');
-                    var href = _attachment_url(value, 'medium');
+                	var src = _attachment_url(value, 'small', uuid);
+                    var href = _attachment_url(value, 'medium', uuid);
                     var imgTag = $('<img/>').attr('src', src);
                     value = $('<div>').append($('<a>').attr('href', href).attr('target', '_blank').append(imgTag)).html();
                 }
                 else if(questions[cleanKey].type == 'audio' || questions[cleanKey].type == 'video')
                 {
-                    var href = _attachment_url(value, 'medium');
+                    var href = _attachment_url(value, 'medium', uuid);
                     value = $('<div>').append($('<a>').attr('href', href).attr('target', '_blank').append(value)).html();
                 }
             }

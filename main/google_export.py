@@ -44,7 +44,6 @@ def google_oauth2_request(request):
             _l = '<ul>'
             for entry in docs_feed.entry:
                 _l += '<li>%s</li>' % entry.title.text
-                print entry.title.text
             _l += '</ul>'
             return HttpResponse(_l)
     return HttpResponseRedirect(redirect_uri)

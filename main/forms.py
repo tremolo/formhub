@@ -1,3 +1,4 @@
+import random
 import re
 import urllib2
 from urlparse import urlparse
@@ -279,7 +280,6 @@ class QuickConverter(QuickConverterFile, QuickConverterURL,
                 csv_data = self.cleaned_data['text_xls_form']
 
                 # assigning the filename to a random string (quick fix)
-                import random
                 rand_name = "uploaded_form_%s.csv" % ''.join(
                     random.sample("abcdefghijklmnopqrstuvwxyz0123456789", 6))
 
@@ -290,6 +290,11 @@ class QuickConverter(QuickConverterFile, QuickConverterURL,
             else:
                 cleaned_xls_file = self.cleaned_data['xls_file']
 
+                #We need to save it here so if the file already exists we get the _N filename
+                cleaned_xls_file = default_storage.save(\
+                    cleaned_xls_file.name, \
+                    ContentFile(cleaned_xls_file.read()))
+
             if not cleaned_xls_file:
                 cleaned_url = self.cleaned_data['xls_url']
                 if cleaned_url.strip() == u'':
@@ -297,10 +302,13 @@ class QuickConverter(QuickConverterFile, QuickConverterURL,
                 cleaned_xls_file = urlparse(cleaned_url)
                 cleaned_xls_file = \
                     '_'.join(cleaned_xls_file.path.split('/')[-2:])
+
                 if cleaned_xls_file[-4:] != '.xls':
                     cleaned_xls_file += '.xls'
+
                 cleaned_xls_file = \
                     upload_to(None, cleaned_xls_file, user.username)
+
                 self.validate(cleaned_url)
                 xls_data = ContentFile(urllib2.urlopen(cleaned_url).read())
                 cleaned_xls_file = \

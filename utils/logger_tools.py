@@ -13,7 +13,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.files.storage import get_storage_class
 from django.core.mail import mail_admins
 from django.core.servers.basehttp import FileWrapper
-from django.db import IntegrityError, DatabaseError
+from django.db import IntegrityError
 from django.db import transaction
 from django.db.models.signals import pre_delete
 from django.http import HttpResponse, HttpResponseNotFound, \
@@ -21,7 +21,7 @@ from django.http import HttpResponse, HttpResponseNotFound, \
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 from django.utils import timezone
-from modilabs.utils.subprocess_timeout import ProcessTimedOut
+#from modilabs.utils.subprocess_timeout import ProcessTimedOut
 from pyxform.errors import PyXFormError
 from pyxform.xform2json import create_survey_element_from_xml
 import sys
@@ -29,7 +29,7 @@ import common_tags
 
 from odk_logger.models import Attachment
 from odk_logger.models import Instance
-from odk_logger.models.instance import InstanceHistory, FormInactiveError
+from odk_logger.models.instance import InstanceHistory
 from odk_logger.models.instance import get_id_string_from_xml_str
 from odk_logger.models import XForm
 from odk_logger.models.xform import XLSFormError
@@ -92,7 +92,7 @@ def create_instance(username, xml_file, media_files,
             raise InstanceInvalidUserError()
 
         if uuid:
-            # try find the form by its uuid which is the ideal condition
+            # try find the fomr by its uuid which is the ideal condition
             if XForm.objects.filter(uuid=uuid).count() > 0:
                 xform = XForm.objects.get(uuid=uuid)
                 xform_username = xform.user.username
@@ -108,8 +108,6 @@ def create_instance(username, xml_file, media_files,
             id_string = get_id_string_from_xml_str(xml)
             xform = XForm.objects.get(
                 id_string=id_string, user__username=username)
-            if not xform.form_active:  # "form is "not active"
-                raise FormInactiveError
             if not xform.is_crowd_form and not is_touchform \
                     and xform.user.profile.require_auth \
                     and xform.user != request.user:
@@ -189,7 +187,7 @@ def create_instance(username, xml_file, media_files,
         # commit all changes
         transaction.commit()
         return instance
-    except Exception, e:
+    except Exception:
         transaction.rollback()
         raise
     return None
@@ -265,9 +263,9 @@ def publish_form(callback):
     except (PyXFormError, XLSFormError) as e:
         return {
             'type': 'alert-error',
-            'text': str(e)
+            'text': e
         }
-    except (IntegrityError, DatabaseError) as e:
+    except IntegrityError as e:
         return {
             'type': 'alert-error',
             'text': _(u'Form with this id or SMS-keyword already exists.'),
@@ -282,19 +280,19 @@ def publish_form(callback):
         # form.publish returned None, not sure why...
         return {
             'type': 'alert-error',
-            'text': str(e)
+            'text': e
         }
-    except ProcessTimedOut as e:
-        # catch timeout errors
-        return {
-            'type': 'alert-error',
-            'text': _(u'Form validation timeout, please try again.'),
-        }
-    except Exception as e:
+#    except ProcessTimedOut as e:
+#        # catch timeout errors
+#        return {
+#            'type': 'alert-error',
+#            'text': _(u'Form validation timeout, please try again.'),
+#        }
+    except Exception, e:
         # error in the XLS file; show an error to the user
         return {
             'type': 'alert-error',
-            'text': str(e)
+            'text': e
         }
 
 
@@ -374,10 +372,6 @@ class OpenRosaResponseBadRequest(OpenRosaResponse):
 
 class OpenRosaResponseNotAllowed(OpenRosaResponse):
     status_code = 405
-
-
-class OpenRosaResponseNotAcceptable(OpenRosaResponse):
-    status_code = 406
 
 
 def inject_instanceid(xml_str, uuid):

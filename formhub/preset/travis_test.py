@@ -10,12 +10,11 @@ except:
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'formhub_test',
-        'USER': 'travis',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'FormhubDjangoDB',
+        'USER': 'formhubDjangoApp',
+        'HOST': 'localhost',
+        'PORT': '',                      # Set to empty string for default.
     }
 }
 
@@ -33,7 +32,7 @@ else:
 if TESTING_MODE:
     MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'test_media/')
     subprocess.call(["rm", "-r", MEDIA_ROOT])
-    MONGO_DATABASE['NAME'] = "formhub_test"
+    # MONGO_DATABASE['NAME'] = "formhub_test"
     # need to have CELERY_ALWAYS_EAGER True and BROKER_BACKEND as memory
     # to run tasks immediately while testing
     CELERY_ALWAYS_EAGER = True
@@ -42,7 +41,3 @@ if TESTING_MODE:
     #TEST_RUNNER = 'djcelery.contrib.test_runner.CeleryTestSuiteRunner'
 else:
     MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media/')
-
-# Clear out the test database
-if TESTING_MODE:
-    MONGO_DB.instances.drop()

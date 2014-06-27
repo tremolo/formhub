@@ -1,33 +1,11 @@
 # vim: set fileencoding=utf-8
-# this project uses structured settings.
-#  [see http://www.slideshare.net/jacobian/the-best-and-worst-of-django for an explanation]
+# this system uses structured settings as defined in http://www.slideshare.net/jacobian/the-best-and-worst-of-django
 #
-# this file is the base settings.py -- which contains settings common to all implementations of this project.
-# Many of these settings, such as TIME_ZONE and ADMINS, and others, should be overridden in another file.
+# this is the base settings.py -- which contains settings common to all implementations of formhub: edit it at last resort
 #
-# local customizations should be done in files in the ./preset directory, each of which in turn imports this one.
-# Those files should be used as the target of your DJANGO_SETTINGS_MODULE environment variable as needed.
-#
-# # # 12-Factor Configuration # # #
-#
-# If DJANGO_SETTINGS_MODULE is not defined (and a --settings= command line switch is not used)
-# then the script ./preset/default_settings.py will be used.
-# It will attempt to open a database defined by the environment variable DATABASE_URL, formatted as:
-#     engine//:user:password@host:port/name
-# where "engine" is one of ['postgres', 'postgis', 'mysql', 'mysqlgis', 'spatialite', 'sqlite']
-# [see http://crate.io/packages/dj-database-url]
-#   (the appropriate database modules must be loaded, of course.)
-# default_settings.py will import one of the presets: production.py or staging.py as appropriate --
-#   staging.py will be used if the string  "test" appears anywhere in the URL,
-#    or if the environment variable DJANGO_CONFIGURATION == 'Dev'.
-#
-# # #  Default configuration # # #
-# if there is no URL, default_settings.py will attempt to import local_preset.py.
-# default_settings.py will attempt to import..local_settings.py, and will warn if it _is_ successful.
-# if nothing else is done, you will get an sqlite3 database in the file db.sqlite in the project directory,
-#  and the staging.py preset will have been imported.
-#
-
+# local customizations should be done in several files each of which in turn imports this one.
+# The local files should be used as the value for your DJANGO_SETTINGS_FILE environment variable as needed.
+# For example, the bin/postactivate file in your virtual environment might look like:
 import os
 import subprocess
 import sys
@@ -36,7 +14,6 @@ from django.core.exceptions import SuspiciousOperation
 
 from pymongo import MongoClient
 
-EHEALTH_AFRICA_OPTOMIZATIONS = True
 
 import djcelery
 djcelery.setup_loader()
@@ -48,6 +25,20 @@ PRINT_EXCEPTION = False
 
 TEMPLATED_EMAIL_TEMPLATE_DIR = 'templated_email/'
 
+ADMINS = (
+    # ('Your Name', 'your_email@example.com'),
+)
+MANAGERS = ADMINS
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'FormhubDjangoDB',
+        'USER': 'formhubDjangoApp',
+        'HOST': 'localhost',
+        'PORT': '',                      # Set to empty string for default.
+    }
+}
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -88,7 +79,7 @@ USE_L10N = True
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = 'http://localhost:8000/media/'
+MEDIA_URL = ''
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -101,11 +92,11 @@ STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 STATIC_URL = '/static/'
 
 #ENKETO URL
-ENKETO_URL = 'https://enketo.org/'
+ENKETO_URL = 'https://enketo.formhub.org/'
 ENKETO_API_SURVEY_PATH = '/api_v1/survey'
 ENKETO_API_INSTANCE_PATH = '/api_v1/instance'
 ENKETO_PREVIEW_URL = ENKETO_URL + 'webform/preview'
-ENKETO_API_TOKEN = 'peu7232s1j198uxr'
+ENKETO_API_TOKEN = ''
 ENKETO_API_INSTANCE_IFRAME_URL = ENKETO_URL + "api_v1/instance/iframe"
 
 # Login URLs
@@ -183,7 +174,6 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'registration',
     'south',
-    'django_nose',
     'django_digest',
     'corsheaders',
     'oauth2_provider',
@@ -383,22 +373,11 @@ ZIP_EXPORT_COUNTDOWN = 3600  # 1 hour
 # default content length for submission requests
 DEFAULT_CONTENT_LENGTH = 10000000
 
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-NOSE_ARGS = ['--with-fixture-bundling']
-#NOSE_PLUGINS = [
-#    'utils.nose_plugins.SilenceSouth'
-#]
-
 # re-captcha in registrations
 REGISTRATION_REQUIRE_CAPTCHA = False
 RECAPTCHA_USE_SSL = False
 RECAPTCHA_PRIVATE_KEY = ''
 RECAPTCHA_PUBLIC_KEY = '6Ld52OMSAAAAAJJ4W-0TFDTgbznnWWFf0XuOSaB6'
-
-try:  # legacy setting for old sites who still use a local_settings.py file and have not updated to presets/
-    from local_settings import *
-except ImportError:
-    pass
 
 # MongoDB
 if MONGO_DATABASE.get('USER') and MONGO_DATABASE.get('PASSWORD'):
@@ -411,4 +390,6 @@ MONGO_CONNECTION = MongoClient(
     MONGO_CONNECTION_URL, safe=True, j=True, tz_aware=True)
 MONGO_DB = MONGO_CONNECTION[MONGO_DATABASE['NAME']]
 
-
+# this is rather pointless, currently, given the state of the tests
+# however, some functions require its being defined
+TESTING_MODE = False

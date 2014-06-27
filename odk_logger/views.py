@@ -6,7 +6,6 @@ import pytz
 
 from datetime import datetime
 from itertools import chain
-
 from django.views.decorators.http import require_GET, require_POST
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
@@ -24,7 +23,6 @@ from django.core.urlresolvers import reverse
 from django.core.exceptions import PermissionDenied
 from django.conf import settings
 from django.utils.translation import ugettext as _
-from django_digest import HttpDigestAuthenticator
 
 from utils.logger_tools import create_instance, OpenRosaResponseBadRequest, \
     OpenRosaResponseNotAllowed, OpenRosaResponse, OpenRosaResponseNotFound,\
@@ -44,7 +42,6 @@ from odk_logger.models.attachment import Attachment
 from utils.log import audit_log, Actions
 from django_digest import HttpDigestAuthenticator
 from utils.viewer_tools import enketo_url
-from odk_logger.validations import validation_patterns
 
 
 @require_POST
@@ -139,7 +136,7 @@ def formList(request, username):
                 return HttpResponseNotAuthorized()
 
         xforms = \
-            XForm.objects.filter(form_active=True, user__username=username)
+            XForm.objects.filter(downloadable=True, user__username=username)
         # retrieve crowd_forms for this user
         crowdforms = XForm.objects.filter(
             metadata__data_type=MetaData.CROWDFORM_USERS,
@@ -211,7 +208,6 @@ def submission(request, username=None):
     context = RequestContext(request)
     xml_file_list = []
     media_files = []
-
     html_response = False
     # request.FILES is a django.utils.datastructures.MultiValueDict
     # for each key we have a list of values
@@ -229,14 +225,6 @@ def submission(request, username=None):
         # response as html if posting with a UUID
         if not username and uuid:
             html_response = True
-
-        # call for submission-time validations, if defined
-        if validation_patterns.dispatch:
-            inhibit = validation_patterns.handler(username, xml_file_list[0], uuid, request, media_files)
-                # will return None to continue normal processing,
-                #  or utils.logger_tools.OpenRosaResponseNotAcceptable to abort record loading with a message
-            if inhibit:
-                return inhibit
         try:
             instance = create_instance(
                 username, xml_file_list[0], media_files,
@@ -246,16 +234,14 @@ def submission(request, username=None):
             return OpenRosaResponseBadRequest(_(u"Username or ID required."))
         except IsNotCrowdformError:
             return OpenRosaResponseNotAllowed(
-                _(u"Sorry but the form you submitted is not a crowd form.")
+                _(u"Sorry but the crowd form you submitted to is closed.")
             )
         except InstanceEmptyError:
             return OpenRosaResponseBadRequest(
                 _(u"Received empty submission. No instance was created")
             )
         except FormInactiveError:
-            return OpenRosaResponseNotFound(
-                _(u"Sorry, the form you submitted is no longer active.")
-            )
+            return OpenRosaResponseNotAllowed(_(u"Form is not active"))
         except XForm.DoesNotExist:
             return OpenRosaResponseNotFound(
                 _(u"Form does not exist on this account")
@@ -285,7 +271,6 @@ def submission(request, username=None):
             {
                 "id_string": instance.xform.id_string
             }, audit, request)
-
         # ODK needs two things for a form to be considered successful
         # 1) the status code needs to be 201 (created)
         # 2) The location header needs to be set to the host it posted to
@@ -425,18 +410,18 @@ def delete_xform(request, username, id_string):
 
 
 @is_owner
-def toggle_form_active(request, username, id_string):
+def toggle_downloadable(request, username, id_string):
     xform = XForm.objects.get(user__username=username, id_string=id_string)
-    xform.form_active = not xform.form_active
+    xform.downloadable = not xform.downloadable
     xform.save()
     audit = {}
     audit_log(
         Actions.FORM_UPDATED, request.user, xform.user,
-        _("Made form '%(id_string)s' %(form_active)s.") %
+        _("Made form '%(id_string)s' %(downloadable)s.") %
         {
             'id_string': xform.id_string,
-            'form_active':
-            _("form_active") if xform.form_active else _("form_inactive")
+            'downloadable':
+            _("downloadable") if xform.downloadable else _("un-downloadable")
         }, audit, request)
     return HttpResponseRedirect("/%s" % username)
 
@@ -452,8 +437,6 @@ def enter_data(request, username, id_string):
     except:
         formhub_url = "http://formhub.org/"
     form_url = formhub_url + username
-    if hasattr(settings, 'TESTING_MODE') and settings.TESTING_MODE:
-        form_url = "https://testserver.com/bob"
     try:
         url = enketo_url(form_url, xform.id_string)
         if not url:
@@ -476,7 +459,6 @@ def enter_data(request, username, id_string):
             request, messages.WARNING,
             _("Enketo error: enketo replied %s") % e, fail_silently=True)
         return render_to_response("profile.html", context_instance=context)
-
     return HttpResponseRedirect(reverse('main.views.show',
                                 kwargs={'username': username,
                                         'id_string': id_string}))
@@ -514,8 +496,6 @@ def edit_data(request, username, id_string, data_id):
                 'id_string': id_string}
         ) + "#/" + str(instance.id))
     form_url = formhub_url + username
-    if settings.TESTING_MODE:
-        form_url = "https://testserver.com/bob"
     try:
         url = enketo_url(
             form_url, xform.id_string, instance_xml=injected_xml,

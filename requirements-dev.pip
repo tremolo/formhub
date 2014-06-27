@@ -1,8 +1,7 @@
+clint
 django-extensions
-ipython
-ipdb
-statsd
-django-statsd-mozilla
-gunicorn
 fabric
-django_nose
+ipdb
+ipython
+shell_command
+twill

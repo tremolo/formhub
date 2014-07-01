@@ -24,6 +24,7 @@ openpyxl==1.7.0
 pandas==0.12.0
 Pillow==2.2.1
 poster>=0.8.1
+psycopg2=2.5.3
 pybamboo==0.5.8.1
 pymongo==2.6.3
 python-digest==1.7

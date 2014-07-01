@@ -1,10 +1,11 @@
 language: python
 services:
   - psql
+  - mongodb
 python:
   - "2.7"
 before_install:
-  -  sudo apt-get install -y postgresql python-psycopg2 postgresql-contrib
+  -  sudo apt-get install -y postgresql python-psycopg2 postgresql-contrib mongodb
   -  /usr/lib/postgresql/9.1/bin/createdb FormhubDjangoDB
   -  sudo apt-get install gfortran libatlas-base-dev libjpeg-dev zlib1g-dev
   -  sudo ln -s /usr/lib/`uname -i`-linux-gnu/libjpeg.so ~/virtualenv/python2.7/lib/

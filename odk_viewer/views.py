@@ -421,9 +421,8 @@ def export_list(request, username, id_string, export_type):
     except KeyError:
         return HttpResponseBadRequest(
                  _("%s is not a valid export type" % export_type))
-    exports = Export.objects.filter(xform=xform, export_type=export_type)\
-        .order_by('-created_on')
-    context.exports = exports
+    context.exports = Export.objects.filter(xform=xform, export_type=export_type).order_by('-created_on')
+    context.is_pending = Export.objects.filter(xform=xform, export_type=export_type, internal_status=0).count()
     return render_to_response('export_list.html', context_instance=context)
 
 

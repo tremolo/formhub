@@ -13,12 +13,13 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.conf import settings
 from recaptcha.client import captcha
 
-from main.models import UserProfile
+#from main.models import UserProfile
 from odk_viewer.models.data_dictionary import upload_to
 from registration.forms import RegistrationFormUniqueEmail
 from registration.models import RegistrationProfile
 from utils.country_field import COUNTRIES
 from utils.logger_tools import publish_xls_form
+from main.models.user_profile import UserProfile
 
 FORM_LICENSES_CHOICES = (
     ('No License', ugettext_lazy('No License')),

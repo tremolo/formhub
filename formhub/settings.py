@@ -190,6 +190,7 @@ INSTALLED_APPS = (
     'djcelery',
     'stats',
     'sms_support',
+    'django_nose',
 )
 
 OAUTH2_PROVIDER = {
@@ -219,6 +220,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     )
 }
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 SWAGGER_SETTINGS = {
     "exclude_namespaces": [],    # List URL namespaces to ignore

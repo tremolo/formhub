@@ -5,7 +5,6 @@ from api.tests.test_api import TestAPICase
 from api.models import Team
 from api.views import TeamViewSet
 
-
 class TestTeamsAPI(TestAPICase):
     def setUp(self):
         super(TestTeamsAPI, self).setUp()
@@ -20,12 +19,14 @@ class TestTeamsAPI(TestAPICase):
         response = self.view(request)
         owner_team = {
             'url':
-            'http://testserver/api/v1/teams/denoinc/%s' % self.owner_team.pk,
-            'name': u'Owners',
+            'http://testserver/api/v1/teams/denoinc/%s' % self.team.pk,
+            'name': u'dreamteam',
             'organization': 'http://testserver/api/v1/users/denoinc',
             'projects': []}
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, [owner_team, self.team_data])
+        self.assertDictContainsSubset(response.data[0], owner_team )
+        self.assertDictContainsSubset(response.data[0], self.team_data ) 
+
 
     def test_teams_get(self):
         self._team_create()
@@ -56,7 +57,7 @@ class TestTeamsAPI(TestAPICase):
         self.assertEqual(response.status_code, 201)
         self.owner_team = Team.objects.get(
             organization=self.organization.user,
-            name='%s#Owners' % (self.organization.user.username))
+            name='%s#dreamteam' % (self.organization.user.username))
         team = Team.objects.get(
             organization=self.organization.user,
             name='%s#%s' % (self.organization.user.username, data['name']))

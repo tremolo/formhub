@@ -16,7 +16,6 @@ from django.template import loader, RequestContext
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_GET, require_POST,\
     require_http_methods
-from google_doc import GoogleDoc
 from guardian.shortcuts import assign_perm, remove_perm, get_users_with_perms
 
 from main.forms import UserProfileForm, FormLicenseForm, DataLicenseForm,\

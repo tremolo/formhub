@@ -64,6 +64,8 @@ var fhExportList =  (function(){
                             if(status.complete)
                             {
                                 anchor.remove()
+                                $("#create-new-export-warn").hide();
+                                $(".new-export-button").show()
                                 if(status.url)
                                 {
                                     parent.empty()

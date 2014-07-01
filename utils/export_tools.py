@@ -24,6 +24,9 @@ from common_tags import ID, XFORM_ID_STRING, STATUS, ATTACHMENTS, GEOLOCATION,\
     PARENT_TABLE_NAME, SUBMISSION_TIME, UUID
 from odk_viewer.models.parsed_instance import _is_invalid_for_mongo,\
     _encode_for_mongo, dict_for_mongo, _decode_from_mongo
+import logging
+
+log = logging.getLogger('utils.export_tools')
 
 
 # this is Mongo Collection where we will store the parsed submissions
@@ -183,6 +186,7 @@ class ExportBuilder(object):
                 current_section, survey_element, sections, select_multiples,
                 gps_fields, encoded_fields, field_delimiter='/'):
             for child in survey_element.children:
+
                 current_section_name = current_section['name']
                 # if a section, recurs
                 if isinstance(child, Section):
@@ -572,7 +576,6 @@ def generate_export(export_type, extension, username, id_string,
 
     # query mongo for the cursor
     records = query_mongo(username, id_string, filter_query)
-
     export_builder = ExportBuilder()
     export_builder.GROUP_DELIMITER = group_delimiter
     export_builder.SPLIT_SELECT_MULTIPLES = split_select_multiples

@@ -13,13 +13,12 @@ before_install:
 install:
   - pip install numpy --use-mirrors
   - pip install -r requirements.pip
-  - python manage.py syncdb --noinput
-  - python manage.py migrate --noinput
+  - python manage.py syncdb --noinput --settings=formhub.preset.ehealth_test
+  - python manage.py migrate --noinput --settings=formhub.preset.ehealth_test
 script:
-  - python manage.py test --noinput --settings=formhub.preset.ehealth_test api main odk_logger odk_viewer restservice sms_support staff stats 
+  - python manage.py test --noinput --settings=formhub.preset.ehealth_test api main odk_logger odk_viewer restservice sms_support staff stats
   - ./js_tests/EnvJasmine/bin/run_all_tests.sh --testDir=../ --configFile=../env_jasmine.conf.js
 notifications:
   email:
     - didi@rebelproject.org
   flowdock: 232485f7661e644ae5878944c2597042
-

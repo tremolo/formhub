@@ -9,6 +9,8 @@ from test_base import MainTestCase
 class TestExport(MainTestCase):
 
     def setUp(self):
+        self._setup_test_environment()
+
         self._create_user_and_login()
         self.fixture_dir = os.path.join(
             self.this_directory, 'fixtures', 'csv_export')
@@ -21,6 +23,7 @@ class TestExport(MainTestCase):
     def test_csv_export_output(self):
         path = os.path.join(self.fixture_dir, 'tutorial_w_repeats.xls')
         self._publish_xls_file_and_set_xform(path)
+        
         path = os.path.join(self.fixture_dir, 'tutorial_w_repeats.xml')
         self._make_submission(
             path, forced_submission_time=self._submission_time)

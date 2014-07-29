@@ -52,6 +52,7 @@ from registration.signals import user_registered
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from django.template.defaultfilters import urlencode
+from main.google_doc import GoogleDoc
 
 
 @receiver(user_registered, dispatch_uid='auto_add_crowdform')
@@ -466,6 +467,7 @@ def public_api(request, username, id_string):
 
 @login_required
 def edit(request, username, id_string):
+    
     xform = XForm.objects.get(user__username=username, id_string=id_string)
     owner = xform.user
 

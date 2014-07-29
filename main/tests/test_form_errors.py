@@ -24,7 +24,7 @@ class TestFormErrors(MainTestCase):
         self.assertEquals(response.status_code, 200)
         self.assertEquals(XForm.objects.count(), count)
 
-    @skip
+    @skip("The description doesn't match what it checks.")
     def test_dl_no_xls(self):
         """
         Exports are built from the JSON form structure so we dont need the
@@ -34,7 +34,7 @@ class TestFormErrors(MainTestCase):
         self.xform.shared_data = True
         self.xform.save()
         default_storage = get_storage_class()()
-        path = self.xform.xls.name
+        path = self.xform.xls.path
         self.assertEqual(default_storage.exists(path), True)
         default_storage.delete(path)
         self.assertEqual(default_storage.exists(path), False)

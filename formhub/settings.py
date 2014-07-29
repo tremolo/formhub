@@ -14,7 +14,6 @@ from django.core.exceptions import SuspiciousOperation
 
 from pymongo import MongoClient
 
-
 import djcelery
 djcelery.setup_loader()
 
@@ -190,7 +189,7 @@ INSTALLED_APPS = (
     'djcelery',
     'stats',
     'sms_support',
-    'django_nose',
+#    'django_nose',
 )
 
 OAUTH2_PROVIDER = {
@@ -221,7 +220,7 @@ REST_FRAMEWORK = {
     )
 }
 
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+#TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 SWAGGER_SETTINGS = {
     "exclude_namespaces": [],    # List URL namespaces to ignore

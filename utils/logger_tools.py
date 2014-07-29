@@ -29,7 +29,7 @@ import common_tags
 
 from odk_logger.models import Attachment
 from odk_logger.models import Instance
-from odk_logger.models.instance import InstanceHistory
+from odk_logger.models.instance import InstanceHistory, FormInactiveError
 from odk_logger.models.instance import get_id_string_from_xml_str
 from odk_logger.models import XForm
 from odk_logger.models.xform import XLSFormError
@@ -80,7 +80,6 @@ def create_instance(username, xml_file, media_files,
         if not uuid:
             # parse UUID from uploaded XML
             split_xml = uuid_regex.split(xml)
-
             # check that xml has UUID, then it is a crowdform
             if len(split_xml) > 1:
                 uuid = split_xml[1]
@@ -90,9 +89,8 @@ def create_instance(username, xml_file, media_files,
 
         if not username and not uuid:
             raise InstanceInvalidUserError()
-
         if uuid:
-            # try find the fomr by its uuid which is the ideal condition
+            # try find the form by its uuid which is the ideal condition
             if XForm.objects.filter(uuid=uuid).count() > 0:
                 xform = XForm.objects.get(uuid=uuid)
                 xform_username = xform.user.username
@@ -105,9 +103,12 @@ def create_instance(username, xml_file, media_files,
         # else, since we have a username, the Instance creation logic will
         # handle checking for the forms existence by its id_string
         if username and request and request.user.is_authenticated():
+        
             id_string = get_id_string_from_xml_str(xml)
             xform = XForm.objects.get(
                 id_string=id_string, user__username=username)
+            if not xform.form_active:  # "form is "not active"
+                raise FormInactiveError
             if not xform.is_crowd_form and not is_touchform \
                     and xform.user.profile.require_auth \
                     and xform.user != request.user:
@@ -121,7 +122,6 @@ def create_instance(username, xml_file, media_files,
         user = get_object_or_404(User, username=username)
         existing_instance_count = Instance.objects.filter(
             xml=xml, user=user).count()
-
         if existing_instance_count == 0:
             proceed_to_create_instance = True
         else:

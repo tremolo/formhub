@@ -1,6 +1,6 @@
 import os
 from django.test import TestCase
-from main.views import GoogleDoc
+from main.google_doc import GoogleDoc
 
 
 class TestGoogleDoc(TestCase):

@@ -32,6 +32,7 @@ from odk_viewer.tasks import create_xls_export
 from xlrd import open_workbook
 from odk_viewer.models.parsed_instance import _encode_for_mongo
 from odk_logger.xform_instance_parser import XFormInstanceParser
+from django.utils.unittest.case import skip
 
 
 class TestExportList(MainTestCase):
@@ -365,45 +366,48 @@ class TestExports(MainTestCase):
         response = self.client.get(export_list_url)
         self.assertEqual(Export.objects.count(), num_exports)
 
-    def test_last_submission_time_on_export(self):
-        self._publish_transportation_form()
-        self._submit_transport_instance()
-        # create export
-        xls_export = generate_export(Export.XLS_EXPORT, 'xls', self.user.username,
-            self.xform.id_string)
-        num_exports = Export.objects.filter(xform=self.xform,
-            export_type=Export.XLS_EXPORT).count()
-        # check that our function knows there are no more submissions
-        self.assertFalse(Export.exports_outdated(xform=self.xform,
-            export_type=Export.XLS_EXPORT))
-        sleep(1)
-        # force new  last submission date on xform
-        last_submission = self.xform.surveys.order_by('-date_created')[0]
-        last_submission.date_created += datetime.timedelta(hours=1)
-        last_submission.save()
-        # check that our function knows data has changed
-        self.assertTrue(Export.exports_outdated(xform=self.xform,
-            export_type=Export.XLS_EXPORT))
-        # check that requesting list url will generate a new export
-        export_list_url = reverse(export_list, kwargs={
-            'username': self.user.username,
-            'id_string': self.xform.id_string,
-            'export_type': Export.XLS_EXPORT
-        })
-        response = self.client.get(export_list_url)
-        self.assertEqual(Export.objects.filter(xform=self.xform,
-            export_type=Export.XLS_EXPORT).count(), num_exports + 1)
-        # make sure another export type causes auto-generation
-        num_exports = Export.objects.filter(xform=self.xform,
-            export_type=Export.CSV_EXPORT).count()
-        export_list_url = reverse(export_list, kwargs={
-            'username': self.user.username,
-            'id_string': self.xform.id_string,
-            'export_type': Export.CSV_EXPORT
-        })
-        response = self.client.get(export_list_url)
-        self.assertEqual(Export.objects.filter(xform=self.xform,
-            export_type=Export.CSV_EXPORT).count(), num_exports + 1)
+
+#     @skip("This feature has been diabled")
+#     def test_last_submission_time_on_export(self):
+#         self._publish_transportation_form()
+#         self._submit_transport_instance()
+#         # create export
+#         xls_export = generate_export(Export.XLS_EXPORT, 'xls', self.user.username,
+#             self.xform.id_string)
+#         num_exports = Export.objects.filter(xform=self.xform,
+#             export_type=Export.XLS_EXPORT).count()
+#         # check that our function knows there are no more submissions
+#         self.assertFalse(Export.exports_outdated(xform=self.xform,
+#             export_type=Export.XLS_EXPORT))
+#         sleep(1)
+#         # force new  last submission date on xform
+#         last_submission = self.xform.surveys.order_by('-date_created')[0]
+#         last_submission.date_created += datetime.timedelta(hours=1)
+#         last_submission.save()
+#         # check that our function knows data has changed
+#         self.assertTrue(Export.exports_outdated(xform=self.xform,
+#             export_type=Export.XLS_EXPORT))
+#         # check that requesting list url will generate a new export
+#         export_list_url = reverse(create_export, kwargs={
+#             'username': self.user.username,
+#             'id_string': self.xform.id_string,
+#             'export_type': Export.XLS_EXPORT
+#         })
+#         response = self.client.get(export_list_url)
+#         sleep(1)
+#         self.assertEqual(Export.objects.filter(xform=self.xform,
+#             export_type=Export.XLS_EXPORT).count(), num_exports + 1)
+#        # make sure another export type causes auto-generation
+#         num_exports = Export.objects.filter(xform=self.xform,
+#             export_type=Export.CSV_EXPORT).count()
+#         export_list_url = reverse(create_export, kwargs={
+#             'username': self.user.username,
+#             'id_string': self.xform.id_string,
+#             'export_type': Export.CSV_EXPORT
+#         })
+#         response = self.client.get(export_list_url)
+#         self.assertEqual(Export.objects.filter(xform=self.xform,
+#             export_type=Export.CSV_EXPORT).count(), num_exports + 1)
 
     def test_last_submission_time_empty(self):
         self._publish_transportation_form()

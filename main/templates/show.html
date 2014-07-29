@@ -392,7 +392,7 @@
                 <h3 data-toggle="collapse" class="toggler" data-target="#sms_tab">{% trans "SMS Support" %} (<acronym title="SMS Support is in beta stage now. Please use carefully as API and IDs might change.">beta</acronym>)</h3>
                 <div id='sms_tab' class="collapse">
                 <form action="{% url "main.views.edit" content_user.username xform.id_string %}" method="post" enctype="multipart/form-data">
-
+				
                 {% if xform.allows_sms %}
                     <p>{% blocktrans %}This form has enabled SMS submissions.{% endblocktrans %} {% blocktrans with id_string=xform.sms_id_string %}Submit to this form using the “<em>{{ id_string }}</em>” identifier.{% endblocktrans %}</p>
                 {% endif %}

@@ -16,7 +16,10 @@ install:
   - python manage.py syncdb --noinput
   - python manage.py migrate --noinput
 script:
-  - python manage.py test --noinput --settings=formhub.preset.travis_test
+  - python manage.py test --noinput --settings=formhub.preset.ehealth_test
   - ./js_tests/EnvJasmine/bin/run_all_tests.sh --testDir=../ --configFile=../env_jasmine.conf.js
 notifications:
-    irc: "irc.freenode.org#sel-columbia"
+  email:
+    - didi@rebelproject.org
+  flowdock: 232485f7661e644ae5878944c2597042
+

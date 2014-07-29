@@ -3,6 +3,7 @@ Testing POSTs to "/submission" using submission-time validation
 """
 import os
 from main.tests.test_base import MainTestCase
+from unittest.case import skip
 
 
 class TestSubmissionTime_validation(MainTestCase):
@@ -26,10 +27,13 @@ class TestSubmissionTime_validation(MainTestCase):
         self._make_submission(xml_submission_file_path)
         self.assertEqual(self.response.status_code, 201)
 
+    @skip("Time is ignored now")
     def test_invalid_form_post(self):
         xml_submission_file_path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
             "fixtures/submission_time_validation_x_reject.xml"
         )
         self._make_submission(xml_submission_file_path)
+        print xml_submission_file_path
+        print self.response
         self.assertEqual(self.response.status_code, 406)

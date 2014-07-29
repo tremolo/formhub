@@ -23,7 +23,7 @@ south_logger.setLevel(logging.INFO)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'FormhubDjangoDB',
+        'NAME': 'formhubdjangodb',
         'USER': 'postgres',
         'PASSWORD': '',
         'HOST': '',

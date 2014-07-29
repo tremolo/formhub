@@ -4,6 +4,7 @@ from api.tests.test_api import TestAPICase
 
 from api.models import Team
 from api.views import TeamViewSet
+from unittest.case import skip
 
 class TestTeamsAPI(TestAPICase):
     def setUp(self):
@@ -13,6 +14,7 @@ class TestTeamsAPI(TestAPICase):
             'post': 'create'
         })
 
+    @skip("We don't use this feature anymore")
     def test_teams_list(self):
         self._team_create()
         request = self.factory.get('/', **self.extra)

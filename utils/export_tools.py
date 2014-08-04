@@ -25,6 +25,7 @@ from common_tags import ID, XFORM_ID_STRING, STATUS, ATTACHMENTS, GEOLOCATION,\
 from odk_viewer.models.parsed_instance import _is_invalid_for_mongo,\
     _encode_for_mongo, dict_for_mongo, _decode_from_mongo
 import logging
+from restservice.models import RestServiceAnswer
 
 log = logging.getLogger('utils.export_tools')
 
@@ -111,7 +112,7 @@ def dict_to_joined_export(data, index, indices, name):
     # TODO: test for _geolocation and attachment lists
     if isinstance(data, dict):
         for key, val in data.iteritems():
-            if isinstance(val, list):
+            if isinstance(val, list) and key != "webhooks":
                 output[key] = []
                 for child in val:
                     if key not in indices:
@@ -144,7 +145,7 @@ class ExportBuilder(object):
                        BAMBOO_DATASET_ID, DELETEDAT]
     # fields we export but are not within the form's structure
     EXTRA_FIELDS = [ID, UUID, SUBMISSION_TIME, INDEX, PARENT_TABLE_NAME,
-                    PARENT_INDEX]
+                    PARENT_INDEX, "webhooks"]
     SPLIT_SELECT_MULTIPLES = True
 
     # column group delimiters
@@ -377,11 +378,30 @@ class ExportBuilder(object):
         form_id_string = args[1]
         pis = ParsedInstance.objects.filter(instance__user__username=username,
                                         instance__xform__id_string=form_id_string)
-        json_dump = [x.to_dict() for x in pis]
+        
+        #Add the return code of the webhooks
+        json_dump =[] 
+        for x in pis:
+            dic = x.to_dict()
+            webhooks = []
+            for i in RestServiceAnswer.objects.filter(instance=x):
+                record = {}
+                record["url"] = i.service.service_url
+                record["status"] = i.returnCode
+                record["content"] = i.returnText
+                record["try"] = i.iteration
+                record["timestamp"] = unicode(i.date)
+                webhooks.append(record)
+                
+            if len(webhooks) > 0:
+                dic["webhooks"] = webhooks
+            
+            json_dump.append(dic)
+        
         with open(path, 'w') as outfile:
             json.dump(json_dump, outfile)
 
-    def to_zipped_csv(self, path, data, *args):
+    def to_zipped_csv(self, path, data, username, id_string, filter_query):
         def encode_if_str(row, key):
             val = row.get(key)
             if isinstance(val, basestring):
@@ -409,18 +429,21 @@ class ExportBuilder(object):
         index = 1
         indices = {}
         survey_name = self.survey.name
+        
         for d in data:
             # decode mongo section names
             joined_export = dict_to_joined_export(d, index, indices,
                                                   survey_name)
             output = ExportBuilder.decode_mongo_encoded_section_names(
                 joined_export)
+            
             # attach meta fields (index, parent_index, parent_table)
             # output has keys for every section
             if survey_name not in output:
                 output[survey_name] = {}
             output[survey_name][INDEX] = index
             output[survey_name][PARENT_INDEX] = -1
+            
             for section in self.sections:
                 # get data for this section and write to csv
                 section_name = section['name']
@@ -431,7 +454,8 @@ class ExportBuilder(object):
                 csv_writer = csv_def['csv_writer']
                 # section name might not exist within the output, e.g. data was
                 # not provided for said repeat - write test to check this
-                row = output.get(section_name, None)
+                row = output[section_name]
+                
                 if type(row) == dict:
                     write_row(
                         self.pre_process_row(row, section),

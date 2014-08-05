@@ -171,6 +171,7 @@ def profile(request, username):
         def set_form():
             form = QuickConverter(request.POST, request.FILES)
             survey = form.publish(request.user).survey
+            
             audit = {}
             audit_log(
                 Actions.FORM_PUBLISHED, request.user, content_user,
@@ -196,7 +197,9 @@ def profile(request, username):
                     'form_url': enketo_webform_url},
                 'form_o': survey
             }
+        
         form_result = publish_form(set_form)
+        
         if form_result['type'] == 'alert-success':
             # comment the following condition (and else)
             # when we want to enable sms check for all.

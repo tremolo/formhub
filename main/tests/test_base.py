@@ -114,7 +114,7 @@ class MainTestCase(TestCase):
         count = XForm.objects.count()
         self.response = self._publish_xls_file(path)
         self.assertEqual(XForm.objects.count(), count + 1)
-        self.xform = XForm.objects.order_by('pk').reverse()[0]
+        self.xform = XForm.objects.order_by('-pk')[0]
 
     def _share_form_data(self, id_string='transportation_2011_07_25'):
         xform = XForm.objects.get(id_string=id_string)
@@ -172,7 +172,7 @@ class MainTestCase(TestCase):
             tmp_file.write(''.join(split_xml))
             path = tmp_file.name
             tmp_file.close()
-
+        
         with open(path) as f:
             post_data = {'xml_submission_file': f}
 
@@ -186,7 +186,6 @@ class MainTestCase(TestCase):
                 url = '/submission'  # touchform has no username
             
             self.response = self.anon.post(url, post_data)
-            
 
         if forced_submission_time:
             instance = Instance.objects.order_by('-pk').all()[0]

@@ -34,6 +34,4 @@ class TestSubmissionTime_validation(MainTestCase):
             "fixtures/submission_time_validation_x_reject.xml"
         )
         self._make_submission(xml_submission_file_path)
-        print xml_submission_file_path
-        print self.response
         self.assertEqual(self.response.status_code, 406)

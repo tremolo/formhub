@@ -401,7 +401,7 @@ class ExportBuilder(object):
         with open(path, 'w') as outfile:
             json.dump(json_dump, outfile)
 
-    def to_zipped_csv(self, path, data, username, id_string, filter_query):
+    def to_zipped_csv(self, path, data, username=None, id_string=None, filter_query=None):
         def encode_if_str(row, key):
             val = row.get(key)
             if isinstance(val, basestring):
@@ -454,7 +454,7 @@ class ExportBuilder(object):
                 csv_writer = csv_def['csv_writer']
                 # section name might not exist within the output, e.g. data was
                 # not provided for said repeat - write test to check this
-                row = output[section_name]
+                row = output.get(section_name, None)
                 
                 if type(row) == dict:
                     write_row(

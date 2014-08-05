@@ -4,9 +4,10 @@ from django.utils.dateparse import parse_datetime
 from odk_viewer.models import DataDictionary, Export
 from utils.export_tools import generate_export
 from test_base import MainTestCase
+import time
 
 
-class TestExport(MainTestCase):
+class TestExportCVS(MainTestCase):
 
     def setUp(self):
         self._setup_test_environment()
@@ -21,8 +22,15 @@ class TestExport(MainTestCase):
         pass
 
     def test_csv_export_output(self):
+        
+        
+        #time.sleep(3)
+        
         path = os.path.join(self.fixture_dir, 'tutorial_w_repeats.xls')
         self._publish_xls_file_and_set_xform(path)
+        
+        # For some reason we need to sleep here so everything gets cleaned up
+        time.sleep(3)
         
         path = os.path.join(self.fixture_dir, 'tutorial_w_repeats.xml')
         self._make_submission(

@@ -21,5 +21,6 @@
     "transport/loop_over_transport_types_frequency/taxi/frequency_to_referral_facility",
     "meta/instanceID",
     "_uuid",
-    "_submission_time"
+    "_submission_time",
+    "webhooks"
 ]

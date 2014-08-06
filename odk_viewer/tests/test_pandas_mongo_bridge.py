@@ -244,14 +244,16 @@ class TestPandasMongoBridge(MainTestCase):
             u'web_browsers/firefox',
             u'web_browsers/chrome',
             u'web_browsers/ie',
-            u'web_browsers/safari',
+            u'web_browsers/safari'
         ] + AbstractDataFrameBuilder.ADDITIONAL_COLUMNS +\
                            AbstractDataFrameBuilder.IGNORED_COLUMNS
         try:
             expected_columns.remove(u'_deleted_at')
+            expected_columns.remove(u'webhooks')
         except ValueError:
             pass
         self.maxDiff = None
+        
         self.assertEqual(sorted(expected_columns), sorted(columns))
 
     def test_format_mongo_data_for_csv(self):
@@ -637,7 +639,7 @@ class TestPandasMongoBridge(MainTestCase):
         # remove dynamic fields
         ignore_list = [
             '_uuid', 'meta/instanceID', 'formhub/uuid', '_submission_time',
-            '_id', '_bamboo_dataset_id']
+            '_id', '_bamboo_dataset_id', 'webhooks']
         for item in ignore_list:
             # pop unwanted keys from main section
             for d in data["groups_in_repeats"]:

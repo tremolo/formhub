@@ -10,9 +10,10 @@ from main.views import show, link_to_bamboo
 from main.tests.test_base import MainTestCase
 from odk_logger.models.xform import XForm
 from restservice.views import add_service, delete_service
-from restservice.RestServiceInterface import RestServiceInterface
 from restservice.models import RestService
-from nose import SkipTest
+from django.utils.unittest.case import skip
+from restservice.tasks import f2dhis2
+#from nose import SkipTest
 
 
 class RestServiceTest(MainTestCase):
@@ -56,15 +57,17 @@ class RestServiceTest(MainTestCase):
 
     def test_service_definition(self):
         self._create_rest_service()
-        sv = self.restservice.get_service_definition()()
-        self.assertEqual(isinstance(sv, RestServiceInterface), True)
+        sv = self.restservice.get_service_definition()
+        self.assertTrue(hasattr(sv, '__call__'))
+        self.assertEqual(sv.__name__, "f2dhis2")
 
     def test_add_service(self):
         self._add_rest_service(self.service_url, self.service_name)
 
+    @skip("comment out when we can test or mock it differently")
     def test_bamboo_service(self):
         # comment out when we can test or mock it differently
-        raise SkipTest
+        #raise SkipTest
         service_url = 'http://bamboo.io/'
         service_name = 'bamboo'
         # self._add_rest_service(service_url, service_name)

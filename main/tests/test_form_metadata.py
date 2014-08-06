@@ -8,13 +8,15 @@ from main.views import show, edit, download_metadata, download_media_data,\
 
 from django.core.files.base import File
 from django.core.urlresolvers import reverse
+from django.conf import settings
 
 
 class TestFormMetadata(MainTestCase):
 
     def setUp(self):
         MainTestCase.setUp(self)
-        self._create_user_and_login()
+        #This is already done in setUp
+        #self._create_user_and_login()
         self._publish_transportation_form_and_submit_instance()
         self.url = reverse(show, kwargs={
             'username': self.user.username,
@@ -36,6 +38,7 @@ class TestFormMetadata(MainTestCase):
             self.post_data = {}
             self.post_data[data_type] = doc_file
             response = self.client.post(self.edit_url, self.post_data)
+
         if data_type == 'media':
             self.doc = MetaData.objects.filter(data_type='media').reverse()[0]
             self.doc_url = reverse(download_media_data, kwargs={

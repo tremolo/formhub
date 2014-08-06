@@ -1,4 +1,3 @@
-from __future__ import print_function
 import base64
 import os
 import re
@@ -12,9 +11,14 @@ from django.contrib.auth.models import User
 from django_digest.test import Client as DigestClient
 from django.test import TestCase
 from django.test.client import Client
+from django.conf import settings
 
 from odk_logger.models import XForm, Instance, Attachment
-from django.conf import settings
+
+import shutil
+import tempfile
+
+
 
 
 class MainTestCase(TestCase):
@@ -31,8 +35,41 @@ class MainTestCase(TestCase):
 
     def tearDown(self):
         # clear mongo db after each test
-        settings.MONGO_DB.instances.drop()
 
+        self._teardown_test_environment()
+
+        settings.MONGO_DB.instances.drop()
+        
+        
+    def _setup_test_environment(self):
+        "Create temp directory and update MEDIA_ROOT and default storage."
+        if not hasattr(settings, "_original_media_root" ):
+            settings._original_media_root = settings.MEDIA_ROOT
+ 
+        if not hasattr(settings, "_original_file_storage" ):
+            settings._original_file_storage = settings.DEFAULT_FILE_STORAGE
+         
+        if not hasattr(self, "_temp_media" ):
+            self._temp_media = tempfile.mkdtemp()
+            settings.MEDIA_ROOT = self._temp_media
+            settings.DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+
+
+    def _teardown_test_environment(self):
+        "Delete temp storage."
+        if hasattr(self, "_temp_media" ):
+            shutil.rmtree(self._temp_media, ignore_errors=True)
+            del self._temp_media
+             
+        if hasattr(settings, "_original_media_root" ):
+            settings.MEDIA_ROOT = settings._original_media_root
+            del settings._original_media_root
+         
+        if hasattr(settings, "_original_file_storage" ):
+            settings.DEFAULT_FILE_STORAGE = settings._original_file_storage
+            del settings._original_file_storage
+
+        
     def _create_user(self, username, password):
         user, created = User.objects.get_or_create(username=username)
         user.set_password(password)
@@ -77,7 +114,7 @@ class MainTestCase(TestCase):
         count = XForm.objects.count()
         self.response = self._publish_xls_file(path)
         self.assertEqual(XForm.objects.count(), count + 1)
-        self.xform = XForm.objects.order_by('pk').reverse()[0]
+        self.xform = XForm.objects.order_by('-pk')[0]
 
     def _share_form_data(self, id_string='transportation_2011_07_25'):
         xform = XForm.objects.get(id_string=id_string)
@@ -123,6 +160,7 @@ class MainTestCase(TestCase):
                          touchforms=False, forced_submission_time=None):
         # store temporary file with dynamic uuid
         tmp_file = None
+        
         if add_uuid and not touchforms:
             tmp_file = NamedTemporaryFile(delete=False)
             split_xml = None
@@ -134,19 +172,19 @@ class MainTestCase(TestCase):
             tmp_file.write(''.join(split_xml))
             path = tmp_file.name
             tmp_file.close()
-
+        
         with open(path) as f:
             post_data = {'xml_submission_file': f}
 
             if username is None:
                 username = self.user.username
             url = '/%s/submission' % username
-
             # touchforms submission
             if add_uuid and touchforms:
                 post_data['uuid'] = self.xform.uuid
             if touchforms:
                 url = '/submission'  # touchform has no username
+            
             self.response = self.anon.post(url, post_data)
 
         if forced_submission_time:

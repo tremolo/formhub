@@ -706,7 +706,10 @@ def attachment_url(request, size='medium'):
             result = Attachment.objects.filter(instance=instance, original_name=media_file.split("/")[-1])[0:1]
             if result.count() == 0:
                 return HttpResponseNotFound(_(u'Attachment not found'))
-            
+    
+    if result.count() == 0:
+        return HttpResponseNotFound(_(u'Attachment not found'))
+    
     attachment = result[0]
 
     if not attachment.mimetype.startswith('image'):

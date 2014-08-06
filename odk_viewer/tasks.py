@@ -56,7 +56,6 @@ def create_async_export(xform, export_type, query, force_xlsx, options=None):
         result = create_kml_export.apply_async(
             (), arguments, countdown=10)
     elif export_type == Export.JSON_EXPORT:
-        print arguments
         result = create_json_export.apply_async(
                 (), arguments, countdown=10)
     else:

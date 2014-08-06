@@ -291,10 +291,11 @@ class QuickConverter(QuickConverterFile, QuickConverterURL,
             else:
                 cleaned_xls_file = self.cleaned_data['xls_file']
 
-                #We need to save it here so if the file already exists we get the _N filename
-                cleaned_xls_file = default_storage.save(\
-                    cleaned_xls_file.name, \
-                    ContentFile(cleaned_xls_file.read()))
+                if cleaned_xls_file and not settings.TESTING_MODE:
+                    #We need to save it here so if the file already exists we get the _N filename
+                    cleaned_xls_file = default_storage.save(\
+                        cleaned_xls_file.name, \
+                        ContentFile(cleaned_xls_file.read()))
 
             if not cleaned_xls_file:
                 cleaned_url = self.cleaned_data['xls_url']

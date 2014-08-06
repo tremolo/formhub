@@ -136,7 +136,7 @@ def formList(request, username):
                 return HttpResponseNotAuthorized()
 
         xforms = \
-            XForm.objects.filter(downloadable=True, user__username=username)
+            XForm.objects.filter(form_active=True, user__username=username)
         # retrieve crowd_forms for this user
         crowdforms = XForm.objects.filter(
             metadata__data_type=MetaData.CROWDFORM_USERS,
@@ -241,7 +241,7 @@ def submission(request, username=None):
                 _(u"Received empty submission. No instance was created")
             )
         except FormInactiveError:
-            return OpenRosaResponseNotAllowed(_(u"Form is not active"))
+            return OpenRosaResponseNotAllowed(_(u"Sorry, the form you submitted is no longer active."))
         except XForm.DoesNotExist:
             return OpenRosaResponseNotFound(
                 _(u"Form does not exist on this account")
@@ -410,33 +410,40 @@ def delete_xform(request, username, id_string):
 
 
 @is_owner
-def toggle_downloadable(request, username, id_string):
+def toggle_form_active(request, username, id_string):
     xform = XForm.objects.get(user__username=username, id_string=id_string)
-    xform.downloadable = not xform.downloadable
+    xform.form_active = not xform.form_active
     xform.save()
     audit = {}
     audit_log(
         Actions.FORM_UPDATED, request.user, xform.user,
-        _("Made form '%(id_string)s' %(downloadable)s.") %
+        _("Made form '%(id_string)s' %(form_active)s.") %
         {
             'id_string': xform.id_string,
-            'downloadable':
-            _("downloadable") if xform.downloadable else _("un-downloadable")
+            'form_active':
+            _("form_active") if xform.form_active else _("form_inactive")
         }, audit, request)
     return HttpResponseRedirect("/%s" % username)
 
 
-def enter_data(request, username, id_string):
+def enter_data(request, username, id_string, test_server=None):
     owner = get_object_or_404(User, username=username)
     xform = get_object_or_404(XForm, user__username=username,
                               id_string=id_string)
     if not has_edit_permission(xform, owner, request, xform.shared):
         return HttpResponseForbidden(_(u'Not shared.'))
-    try:
-        formhub_url = "http://%s/" % request.META['HTTP_HOST']
-    except:
-        formhub_url = "http://formhub.org/"
-    form_url = formhub_url + username
+    
+    if test_server:
+        form_url = test_server
+    else:
+        try:
+            formhub_url = "http://%s/" % request.META['HTTP_HOST']
+        except:
+            formhub_url = "http://formhub.org/"
+        form_url = formhub_url + username   
+        
+        if hasattr(settings, "TESTING_MODE") and settings.TESTING_MODE:
+            form_url = "https://testserver.com/bob"
     try:
         url = enketo_url(form_url, xform.id_string)
         if not url:
@@ -496,6 +503,10 @@ def edit_data(request, username, id_string, data_id):
                 'id_string': id_string}
         ) + "#/" + str(instance.id))
     form_url = formhub_url + username
+    
+    if hasattr(settings, "TESTING_MODE") and settings.TESTING_MODE:
+        form_url = "https://testserver.com/bob"
+
     try:
         url = enketo_url(
             form_url, xform.id_string, instance_xml=injected_xml,

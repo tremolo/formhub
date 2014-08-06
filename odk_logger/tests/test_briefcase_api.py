@@ -27,6 +27,7 @@ class TestBriefcaseAPI(MainTestCase):
 
     def setUp(self):
         super(MainTestCase, self).setUp()
+        self._setup_test_environment()
         self._create_user_and_login()
         self._logout()
         self.form_def_path = os.path.join(
@@ -169,6 +170,9 @@ class TestBriefcaseAPI(MainTestCase):
             text = f.read()
             text = text.replace(u'{{submissionDate}}',
                                 instance.date_created.isoformat())
+            text = text.replace(u'1335783522563.jpg',
+                                self.attachment_media_file.name.split("/")[-1])
+            
             self.assertContains(response, instanceId, status_code=200)
             self.assertMultiLineEqual(response.content, text)
 

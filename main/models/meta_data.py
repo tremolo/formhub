@@ -4,16 +4,17 @@ from django.db import models
 from odk_logger.models import XForm
 
 from hashlib import md5
+from django.conf import settings
 
 
 def upload_to(instance, filename):
     if instance.data_type == 'media':
-        return os.path.join(
+        return os.path.join(settings.MEDIA_ROOT,
             instance.xform.user.username,
             'formid-media',
             filename
         )
-    return os.path.join(
+    return os.path.join(settings.MEDIA_ROOT,
         instance.xform.user.username,
         'docs',
         filename
@@ -95,6 +96,7 @@ class MetaData(models.Model):
                            data_file=data_file,
                            data_file_type=data_file.content_type)
             doc.save()
+            
         return type_for_form(xform, data_type)
 
     @staticmethod

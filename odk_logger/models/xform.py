@@ -155,6 +155,7 @@ class XForm(models.Model):
             except:
                 self.sms_id_string = self.id_string
         super(XForm, self).save(*args, **kwargs)
+        
         for perm in get_perms_for_model(XForm):
             assign_perm(perm.codename, self.user, self)
 

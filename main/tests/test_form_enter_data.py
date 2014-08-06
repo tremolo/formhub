@@ -40,7 +40,8 @@ class TestFormEnterData(MainTestCase):
 
     def setUp(self):
         MainTestCase.setUp(self)
-        self._create_user_and_login()
+        #Already done by setUp
+        #self._create_user_and_login()
         self._publish_transportation_form_and_submit_instance()
         self.perm_url = reverse(set_perm, kwargs={
             'username': self.user.username, 'id_string': self.xform.id_string})
@@ -75,7 +76,7 @@ class TestFormEnterData(MainTestCase):
             request, self.user.username, self.xform.id_string)
         return response
 
-    @unittest.skipIf(settings.EHEALTH_AFRICA_OPTOMIZATIONS, 'No QRCODE on eHealth screens')
+    @unittest.skipIf(not hasattr(settings, "EHEALTH_AFRICA_OPTOMIZATIONS"), 'No QRCODE on eHealth screens')
     def test_qrcode_view(self):
         with HTTMock(enketo_mock):
             response = self._get_grcode_view_response()
@@ -85,7 +86,7 @@ class TestFormEnterData(MainTestCase):
                 data = f.read()
                 self.assertContains(response, data.strip(), status_code=200)
 
-    @unittest.skipIf(settings.EHEALTH_AFRICA_OPTOMIZATIONS, 'No QRCODE on eHealth screens')
+    @unittest.skipIf(not hasattr(settings, "EHEALTH_AFRICA_OPTOMIZATIONS"), 'No QRCODE on eHealth screens')
     def test_qrcode_view_with_enketo_error(self):
         with HTTMock(enketo_error_mock):
             response = self._get_grcode_view_response()
@@ -98,8 +99,9 @@ class TestFormEnterData(MainTestCase):
         request = factory.get('/')
         request.user = self.user
         response = enter_data(
-            request, self.user.username, self.xform.id_string)
+            request, self.user.username, self.xform.id_string, test_server="https://testserver.com/bob")
         #make sure response redirect to an enketo site
+                
         enketo_base_url = urlparse(settings.ENKETO_URL).netloc
         redirected_base_url = urlparse(response['Location']).netloc
         #TODO: checking if the form is valid on enketo side

@@ -18,11 +18,21 @@ class RestService(models.Model):
         return u"%s:%s - %s" % (self.xform, self.long_name, self.service_url)
 
     def get_service_definition(self):
-        m = __import__(''.join(['restservice.services.', self.name]),
-                       globals(), locals(), ['ServiceDefinition'])
-        return m.ServiceDefinition
+        m = __import__(''.join(['restservice.tasks']), globals(), \
+                       locals(),[self.name])
+        a = getattr(m,self.name) 
+        return a
 
     @property
     def long_name(self):
-        sv = self.get_service_definition()
-        return sv.verbose_name
+        return [i for i in SERVICE_CHOICES if i[0]==self.name][0][1]
+
+
+
+class RestServiceAnswer(models.Model):
+    service = models.ForeignKey(RestService)
+    instance = models.ForeignKey("odk_viewer.ParsedInstance")
+    returnCode = models.CharField(max_length=4)
+    returnText = models.TextField()
+    iteration = models.PositiveIntegerField(default=0)
+    date = models.DateTimeField(auto_now=True)

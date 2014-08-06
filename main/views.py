@@ -52,6 +52,7 @@ from registration.signals import user_registered
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from django.template.defaultfilters import urlencode
+from main.google_doc import GoogleDoc
 
 
 @receiver(user_registered, dispatch_uid='auto_add_crowdform')
@@ -170,6 +171,7 @@ def profile(request, username):
         def set_form():
             form = QuickConverter(request.POST, request.FILES)
             survey = form.publish(request.user).survey
+            
             audit = {}
             audit_log(
                 Actions.FORM_PUBLISHED, request.user, content_user,
@@ -195,7 +197,9 @@ def profile(request, username):
                     'form_url': enketo_webform_url},
                 'form_o': survey
             }
+        
         form_result = publish_form(set_form)
+        
         if form_result['type'] == 'alert-success':
             # comment the following condition (and else)
             # when we want to enable sms check for all.
@@ -466,6 +470,7 @@ def public_api(request, username, id_string):
 
 @login_required
 def edit(request, username, id_string):
+    
     xform = XForm.objects.get(user__username=username, id_string=id_string)
     owner = xform.user
 

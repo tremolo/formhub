@@ -259,7 +259,6 @@
                      href="{% url "odk_logger.views.enter_data" content_user.username xform.id_string %}">
                       <i class="icon-edit icon-white"></i> {% trans "Enter Web Form" %}
                   </a>
-                  <a data-toggle="modal" data-target="#popupmodal" class="showqr btn btn-info" href="{% url "get_qrcode" xform.user.username xform.id_string %}"><i class="icon-tablet"></i> {% trans "Mobile" %}</a>
                   {% endif %}
                   {% if can_edit or xform.is_crowd_form or xform.shared %}
                   <a class="btn btn-info" rel="tooltip" title="{% trans 'Preview Form' %}" href="#preview-modal"

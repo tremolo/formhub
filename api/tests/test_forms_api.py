@@ -77,7 +77,6 @@ class TestFormsAPI(TestAPICase):
         })
         formid = self.xform.pk
         data = {
-            "name": "transportation",
             "title": "transportation_2011_07_25",
             "default_language": "default",
             "id_string": "transportation_2011_07_25",
@@ -87,6 +86,10 @@ class TestFormsAPI(TestAPICase):
         response = view(request, owner='bob', pk=formid, format='json')
         self.assertEqual(response.status_code, 200)
         self.assertDictContainsSubset(data, response.data)
+        self.assertRegexpMatches(response.data['name'], r'^transportation.*')
+        
+        tmpName = response.data['name']
+
         response = view(request, owner='bob', pk=formid, format='xml')
         self.assertEqual(response.status_code, 200)
         response_doc = minidom.parseString(response.data)
@@ -107,13 +110,13 @@ class TestFormsAPI(TestAPICase):
         uuid_nodes = [
             node for node in model_node.childNodes
             if node.nodeType == Node.ELEMENT_NODE
-            and node.getAttribute("nodeset") == "/transportation/formhub/uuid"]
+            and node.getAttribute("nodeset") == "/"+tmpName+"/formhub/uuid"]
         self.assertEqual(len(uuid_nodes), 1)
         uuid_node = uuid_nodes[0]
         uuid_node.setAttribute("calculate", "''")
 
         # check content without UUID
-        self.assertEqual(response_doc.toxml(), expected_doc.toxml())
+        self.assertEqual(response_doc.toxml().replace(tmpName, "transportation") , expected_doc.toxml())
 
     def test_form_tags(self):
         self._publish_xls_form_to_project()

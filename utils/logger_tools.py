@@ -13,7 +13,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.files.storage import get_storage_class
 from django.core.mail import mail_admins
 from django.core.servers.basehttp import FileWrapper
-from django.db import IntegrityError, DatabaseError
+from django.db import IntegrityError
 from django.db import transaction
 from django.db.models.signals import pre_delete
 from django.http import HttpResponse, HttpResponseNotFound, \
@@ -21,7 +21,7 @@ from django.http import HttpResponse, HttpResponseNotFound, \
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 from django.utils import timezone
-from modilabs.utils.subprocess_timeout import ProcessTimedOut
+#from modilabs.utils.subprocess_timeout import ProcessTimedOut
 from pyxform.errors import PyXFormError
 from pyxform.xform2json import create_survey_element_from_xml
 import sys
@@ -80,7 +80,6 @@ def create_instance(username, xml_file, media_files,
         if not uuid:
             # parse UUID from uploaded XML
             split_xml = uuid_regex.split(xml)
-
             # check that xml has UUID, then it is a crowdform
             if len(split_xml) > 1:
                 uuid = split_xml[1]
@@ -90,7 +89,6 @@ def create_instance(username, xml_file, media_files,
 
         if not username and not uuid:
             raise InstanceInvalidUserError()
-
         if uuid:
             # try find the form by its uuid which is the ideal condition
             if XForm.objects.filter(uuid=uuid).count() > 0:
@@ -105,6 +103,7 @@ def create_instance(username, xml_file, media_files,
         # else, since we have a username, the Instance creation logic will
         # handle checking for the forms existence by its id_string
         if username and request and request.user.is_authenticated():
+        
             id_string = get_id_string_from_xml_str(xml)
             xform = XForm.objects.get(
                 id_string=id_string, user__username=username)
@@ -123,7 +122,6 @@ def create_instance(username, xml_file, media_files,
         user = get_object_or_404(User, username=username)
         existing_instance_count = Instance.objects.filter(
             xml=xml, user=user).count()
-
         if existing_instance_count == 0:
             proceed_to_create_instance = True
         else:
@@ -265,9 +263,9 @@ def publish_form(callback):
     except (PyXFormError, XLSFormError) as e:
         return {
             'type': 'alert-error',
-            'text': str(e)
+            'text': e
         }
-    except (IntegrityError, DatabaseError) as e:
+    except IntegrityError as e:
         return {
             'type': 'alert-error',
             'text': _(u'Form with this id or SMS-keyword already exists.'),
@@ -282,19 +280,19 @@ def publish_form(callback):
         # form.publish returned None, not sure why...
         return {
             'type': 'alert-error',
-            'text': str(e)
+            'text': e
         }
-    except ProcessTimedOut as e:
-        # catch timeout errors
-        return {
-            'type': 'alert-error',
-            'text': _(u'Form validation timeout, please try again.'),
-        }
-    except Exception as e:
+#    except ProcessTimedOut as e:
+#        # catch timeout errors
+#        return {
+#            'type': 'alert-error',
+#            'text': _(u'Form validation timeout, please try again.'),
+#        }
+    except Exception, e:
         # error in the XLS file; show an error to the user
         return {
             'type': 'alert-error',
-            'text': str(e)
+            'text': e
         }
 
 
@@ -374,10 +372,6 @@ class OpenRosaResponseBadRequest(OpenRosaResponse):
 
 class OpenRosaResponseNotAllowed(OpenRosaResponse):
     status_code = 405
-
-
-class OpenRosaResponseNotAcceptable(OpenRosaResponse):
-    status_code = 406
 
 
 def inject_instanceid(xml_str, uuid):

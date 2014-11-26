@@ -70,7 +70,7 @@ class AbstractDataFrameBuilder(object):
     IGNORED_COLUMNS = [XFORM_ID_STRING, STATUS, ID, ATTACHMENTS, GEOLOCATION,
                        BAMBOO_DATASET_ID, DELETEDAT]
     # fields NOT within the form def that we want to include
-    ADDITIONAL_COLUMNS = [UUID, SUBMISSION_TIME]
+    ADDITIONAL_COLUMNS = [UUID, SUBMISSION_TIME, "webhooks"]
 
     """
     Group functionality used by any DataFrameBuilder i.e. XLS, CSV and KML
@@ -463,7 +463,7 @@ class CSVDataFrameBuilder(AbstractDataFrameBuilder):
         d = {}
 
         # check for lists
-        if type(value) is list and len(value) > 0:
+        if type(value) is list and len(value) > 0 and key != "webhooks" :
             for index, item in enumerate(value):
                 # start at 1
                 index += 1
@@ -480,7 +480,7 @@ class CSVDataFrameBuilder(AbstractDataFrameBuilder):
                         # re-create xpath the split on /
                         xpaths = "/".join(xpaths).split("/")
                         new_prefix = xpaths[:-1]
-                        if type(nested_val) is list:
+                        if type(nested_val) is list and nested_key != "webhooks":
                             # if nested_value is a list, rinse and repeat
                             d.update(cls._reindex(nested_key, nested_val,
                                 ordered_columns, new_prefix))
@@ -590,7 +590,7 @@ class CSVDataFrameBuilder(AbstractDataFrameBuilder):
 
         # add extra columns
         columns += [col for col in self.ADDITIONAL_COLUMNS]
-
+        
         header = True
         if hasattr(file_or_path, 'read'):
             csv_file = file_or_path

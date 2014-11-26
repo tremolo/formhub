@@ -13,11 +13,22 @@ from utils.backup_tools import _date_created_from_filename,\
 
 class TestBackupTools(MainTestCase):
     def setUp(self):
+        self._setup_test_environment()
+        
         super(TestBackupTools, self).setUp()
+        
         self._publish_xls_file_and_set_xform(
             os.path.join(
                 settings.PROJECT_ROOT,
                 "odk_logger", "fixtures", "test_forms", "tutorial.xls"))
+        
+    def tearDown(self):
+        # clear mongo db after each test
+        self._teardown_test_environment()
+        settings.MONGO_DB.instances.drop()
+        
+        super(TestBackupTools, self).tearDown()
+
 
     def test_date_created_override(self):
         """

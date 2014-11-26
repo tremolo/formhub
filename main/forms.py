@@ -1,3 +1,4 @@
+import random
 import re
 import urllib2
 from urlparse import urlparse
@@ -12,12 +13,13 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.conf import settings
 from recaptcha.client import captcha
 
-from main.models import UserProfile
+#from main.models import UserProfile
 from odk_viewer.models.data_dictionary import upload_to
 from registration.forms import RegistrationFormUniqueEmail
 from registration.models import RegistrationProfile
 from utils.country_field import COUNTRIES
 from utils.logger_tools import publish_xls_form
+from main.models.user_profile import UserProfile
 
 FORM_LICENSES_CHOICES = (
     ('No License', ugettext_lazy('No License')),
@@ -231,9 +233,9 @@ class MediaForm(forms.Form):
 
     def clean_media(self):
         data_type = self.cleaned_data['media'].content_type
-        if not data_type in ['image/jpeg', 'image/png', 'audio/mpeg']:
+        if not data_type in ['image/jpeg', 'image/png', 'audio/mpeg', 'application/csv', 'application/zip']:
             raise forms.ValidationError('Only these media types are \
-                                        allowed .png .jpg .mp3 .3gp .wav')
+                                        allowed .png .jpg .mp3 .3gp .wav .csv .zip')
 
 
 class MapboxLayerForm(forms.Form):
@@ -279,7 +281,6 @@ class QuickConverter(QuickConverterFile, QuickConverterURL,
                 csv_data = self.cleaned_data['text_xls_form']
 
                 # assigning the filename to a random string (quick fix)
-                import random
                 rand_name = "uploaded_form_%s.csv" % ''.join(
                     random.sample("abcdefghijklmnopqrstuvwxyz0123456789", 6))
 
@@ -290,6 +291,12 @@ class QuickConverter(QuickConverterFile, QuickConverterURL,
             else:
                 cleaned_xls_file = self.cleaned_data['xls_file']
 
+                if cleaned_xls_file and not settings.TESTING_MODE:
+                    #We need to save it here so if the file already exists we get the _N filename
+                    cleaned_xls_file = default_storage.save(\
+                        cleaned_xls_file.name, \
+                        ContentFile(cleaned_xls_file.read()))
+
             if not cleaned_xls_file:
                 cleaned_url = self.cleaned_data['xls_url']
                 if cleaned_url.strip() == u'':
@@ -297,10 +304,13 @@ class QuickConverter(QuickConverterFile, QuickConverterURL,
                 cleaned_xls_file = urlparse(cleaned_url)
                 cleaned_xls_file = \
                     '_'.join(cleaned_xls_file.path.split('/')[-2:])
+
                 if cleaned_xls_file[-4:] != '.xls':
                     cleaned_xls_file += '.xls'
+
                 cleaned_xls_file = \
                     upload_to(None, cleaned_xls_file, user.username)
+
                 self.validate(cleaned_url)
                 xls_data = ContentFile(urllib2.urlopen(cleaned_url).read())
                 cleaned_xls_file = \

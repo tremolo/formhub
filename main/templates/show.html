@@ -259,7 +259,6 @@
                      href="{% url "odk_logger.views.enter_data" content_user.username xform.id_string %}">
                       <i class="icon-edit icon-white"></i> {% trans "Enter Web Form" %}
                   </a>
-                  <a data-toggle="modal" data-target="#popupmodal" class="showqr btn btn-info" href="{% url "get_qrcode" xform.user.username xform.id_string %}"><i class="icon-tablet"></i> {% trans "Mobile" %}</a>
                   {% endif %}
                   {% if can_edit or xform.is_crowd_form or xform.shared %}
                   <a class="btn btn-info" rel="tooltip" title="{% trans 'Preview Form' %}" href="#preview-modal"
@@ -344,7 +343,7 @@
         {% endif %}
         <br/>
         <div class="clearfix bordered">
-            <h3 data-toggle="collapse" class="toggler" data-target="#media_tab">{% blocktrans %}Media &nbsp;<small>jpeg/png/mp3/wav/3gp allowed</small>{% endblocktrans %}</h3>
+            <h3 data-toggle="collapse" class="toggler" data-target="#media_tab">{% blocktrans %}Media &nbsp;<small>jpeg/png/mp3/wav/3gp/csv/zip allowed</small>{% endblocktrans %}</h3>
             <div id='media_tab' class="collapse">
             {% for media in media_upload %}
               <p><a href="{% url "main.views.download_media_data" content_user.username xform.id_string media.id %}">{{ media.data_value }}</a>
@@ -392,7 +391,7 @@
                 <h3 data-toggle="collapse" class="toggler" data-target="#sms_tab">{% trans "SMS Support" %} (<acronym title="SMS Support is in beta stage now. Please use carefully as API and IDs might change.">beta</acronym>)</h3>
                 <div id='sms_tab' class="collapse">
                 <form action="{% url "main.views.edit" content_user.username xform.id_string %}" method="post" enctype="multipart/form-data">
-
+				
                 {% if xform.allows_sms %}
                     <p>{% blocktrans %}This form has enabled SMS submissions.{% endblocktrans %} {% blocktrans with id_string=xform.sms_id_string %}Submit to this form using the “<em>{{ id_string }}</em>” identifier.{% endblocktrans %}</p>
                 {% endif %}
@@ -583,15 +582,9 @@
 </div>
 {% endblock %}
 
-{% block styles %}
-{{ block.super }}
- <link href="/static/css/iphone-btn-style.css" rel="stylesheet"/>
-{% endblock %}
-
 {% block javascript %}
 {{ block.super }}
 
-<script type="text/javascript" src="/static/js/iphone-style-checkboxes.js"></script>
   {% if user.is_authenticated %}
     <script type="text/javascript" src="/static/js/form_actions.js"></script>
   {% endif %}
@@ -644,28 +637,6 @@ $(document).ready(function() {
                 $('#form-encrypted').hide();
                 $('#data-encrypted').hide();
               {% endif %}
-              $.each(['form-shared', 'data-shared', 'active-form', 'crowd-form'], function(inx, el) {
-                var cb = $('#' + el + ':checkbox');
-                cb.iphoneStyle({
-                  onChange: function() {
-                    // a callback func
-                    var c = function(){}
-                    // if crowdform is toggled, change data and form status
-                    // appropriately
-                    if(el == 'crowd-form' && $('#crowd-form').attr('checked') == 'checked'){
-                        if($('#form-shared:checkbox').attr('checked') == undefined)
-                            $('#form-shared:checkbox').click()
-                        if($('#data-shared:checkbox').attr('checked') == undefined)
-                            $('#data-shared:checkbox').click()
-                    }
-
-                    privacyEdit(cb.data('url'), el.split('-')[0]);
-                    $('#' + el + '-public').toggle();
-                    $('#' + el + '-private').toggle();
-
-                  }
-                });
-              });
             {% if user.is_authenticated %}
               // add click event to all public (x)forms
               $('a.clonexls').click(function(){

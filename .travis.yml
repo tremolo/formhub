@@ -4,18 +4,21 @@ services:
 python:
   - "2.7"
 before_install:
-  - mysql -e 'create database formhub_test;'
+  -  sudo apt-get install -y python-psycopg2 postgresql-contrib
   -  sudo apt-get install gfortran libatlas-base-dev libjpeg-dev zlib1g-dev
   -  sudo ln -s /usr/lib/`uname -i`-linux-gnu/libjpeg.so ~/virtualenv/python2.7/lib/
   -  sudo ln -s /usr/lib/`uname -i`-linux-gnu/libz.so ~/virtualenv/python2.7/lib/
 install:
+  - psql -c 'create database formhubdjangodb;' -U postgres
   - pip install numpy --use-mirrors
-  - pip install -r requirements.pip --use-mirrors
-  - pip install -r requirements-mysql.pip --use-mirrors
-  - python manage.py syncdb --noinput --settings=formhub.preset.travis_test
-  - python manage.py migrate --noinput --settings=formhub.preset.travis_test
+  - pip install -r requirements.pip
+  - python manage.py syncdb --noinput --settings=formhub.preset.ehealth_test
+  - python manage.py migrate --noinput --settings=formhub.preset.ehealth_test
+  - python manage.py collectstatic --clear --noinput --settings=formhub.preset.ehealth_test
 script:
-  - python manage.py test --noinput --settings=formhub.preset.travis_test
+  - python manage.py test --noinput --settings=formhub.preset.ehealth_test api main odk_logger odk_viewer restservice sms_support staff stats
   - ./js_tests/EnvJasmine/bin/run_all_tests.sh --testDir=../ --configFile=../env_jasmine.conf.js
 notifications:
-  irc: "irc.freenode.org#moditest"
+  email:
+    - didi@rebelproject.org
+  flowdock: 232485f7661e644ae5878944c2597042

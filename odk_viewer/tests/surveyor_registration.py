@@ -4,7 +4,7 @@ Testing POSTs to "/submission"
 from django.test import TestCase, Client
 
 from odk_logger.models import Instance, XForm
-from surveyor_manager.models import Surveyor
+#from surveyor_manager.models import Surveyor
 from datetime import datetime
 from odk_logger.factory import XFormManagerFactory
 
@@ -22,14 +22,14 @@ class TestSurveyorRegistration(TestCase):
         registration_forms = XForm.objects.filter(title=u"registration")
         self.assertTrue(len(registration_forms) > 0)
     
-    def test_registration_creates_surveyor(self):
-        registration_instance = xform_factory.create_registration_instance({u'start': datetime.now(),
-            u'name': u'Steak Sauce',
-            u'device_id': u'12345'
-            })
-        
-        self.assertEqual(Surveyor.objects.count(), 1)
-        self.assertEqual(Surveyor.objects.all()[0].name, u"Steak Sauce")
+#     def test_registration_creates_surveyor(self):
+#         registration_instance = xform_factory.create_registration_instance({u'start': datetime.now(),
+#             u'name': u'Steak Sauce',
+#             u'device_id': u'12345'
+#             })
+#         
+#         self.assertEqual(Surveyor.objects.count(), 1)
+#         self.assertEqual(Surveyor.objects.all()[0].name, u"Steak Sauce")
         
     def test_multiple_registrations_on_the_same_phone(self):
         """

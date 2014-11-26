@@ -13,8 +13,9 @@
         {% csrf_token %}
             <span style='float:middle;'>
               <div>
-                <input type="submit" class="btn large btn-primary" value="{% trans 'New Export' %}" />
-                <a href="#advanced-export-modal" role="button" class="btn" data-toggle="modal">{% trans "Advanced Export" %}</a>
+               	<input {% if is_pending != 0 %}style="display:none;"{% endif %} type="submit" class="btn large btn-primary new-export-button" value="{% trans 'New Export' %}" />
+               	<a {% if is_pending != 0 %}style="display:none;"{% endif %} href="#advanced-export-modal" role="button" class="btn new-export-button" data-toggle="modal">{% trans "Advanced Export" %}</a>
+               	<span id="create-new-export-warn" {% if is_pending == 0 %}style="display:none;"{% endif %}>{% blocktrans %}You can not start a new export while another export is running{% endblocktrans %}</span>
             </div>
             </span>
     </form>

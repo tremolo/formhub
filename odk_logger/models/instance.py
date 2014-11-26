@@ -101,6 +101,7 @@ class Instance(models.Model):
         doc = self.get_dict()
         if self.xform and not self.xform.form_active:
             raise FormInactiveError()
+        
         self._set_start_time(doc)
         self._set_date(doc)
         self._set_survey_type(doc)

@@ -16,7 +16,6 @@ from django.template import loader, RequestContext
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_GET, require_POST,\
     require_http_methods
-from google_doc import GoogleDoc
 from guardian.shortcuts import assign_perm, remove_perm, get_users_with_perms
 
 from main.forms import UserProfileForm, FormLicenseForm, DataLicenseForm,\
@@ -52,6 +51,8 @@ from sms_support.providers import providers_doc
 from registration.signals import user_registered
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
+from django.template.defaultfilters import urlencode
+from main.google_doc import GoogleDoc
 
 
 @receiver(user_registered, dispatch_uid='auto_add_crowdform')
@@ -170,6 +171,7 @@ def profile(request, username):
         def set_form():
             form = QuickConverter(request.POST, request.FILES)
             survey = form.publish(request.user).survey
+            
             audit = {}
             audit_log(
                 Actions.FORM_PUBLISHED, request.user, content_user,
@@ -195,7 +197,9 @@ def profile(request, username):
                     'form_url': enketo_webform_url},
                 'form_o': survey
             }
+        
         form_result = publish_form(set_form)
+        
         if form_result['type'] == 'alert-success':
             # comment the following condition (and else)
             # when we want to enable sms check for all.
@@ -466,6 +470,7 @@ def public_api(request, username, id_string):
 
 @login_required
 def edit(request, username, id_string):
+    
     xform = XForm.objects.get(user__username=username, id_string=id_string)
     owner = xform.user
 
@@ -908,7 +913,7 @@ def form_photos(request, username, id_string):
 
             for i in ['small', 'medium', 'large', 'original']:
                 url = reverse(attachment_url, kwargs={'size': i})
-                url = '%s?media_file=%s' % (url, attachment.media_file.name)
+                url = '%s?media_file=%s' % (url, urlencode(attachment.media_file.name))
                 data[i] = url
 
             image_urls.append(data)

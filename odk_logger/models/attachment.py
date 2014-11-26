@@ -19,6 +19,13 @@ def upload_to(instance, filename):
 class Attachment(models.Model):
     instance = models.ForeignKey(Instance, related_name="attachments")
     media_file = models.FileField(upload_to=upload_to)
+    
+    # This is because the media_file might rename the filename (if it exists)
+    # But we still save the json into MongoDB so the objects.get will not work
+    # That is why we save the original file name too, just so we don't loose it
+    # and we can retrieve it, if we need to. 
+    original_name = models.CharField(max_length=250, null=True, blank=True)
+
     mimetype = models.CharField(
         max_length=50, null=False, blank=True, default='')
 
@@ -31,6 +38,10 @@ class Attachment(models.Model):
             mimetype, encoding = mimetypes.guess_type(self.media_file.name)
             if mimetype:
                 self.mimetype = mimetype
+        
+        if not self.original_name:
+            self.original_name = self.media_file.name
+        
         super(Attachment, self).save(*args, **kwargs)
 
     @property

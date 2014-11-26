@@ -8,6 +8,8 @@ from utils.export_tools import generate_export,\
     generate_attachments_zip_export, generate_kml_export
 from utils.logger_tools import mongo_sync_status, report_exception
 from pandas_mongo_bridge import NoRecordsFoundError
+import logging
+log = logging.getLogger('odk_viewer.tasks')
 
 
 def create_async_export(xform, export_type, query, force_xlsx, options=None):
@@ -54,7 +56,6 @@ def create_async_export(xform, export_type, query, force_xlsx, options=None):
         result = create_kml_export.apply_async(
             (), arguments, countdown=10)
     elif export_type == Export.JSON_EXPORT:
-        print arguments
         result = create_json_export.apply_async(
                 (), arguments, countdown=10)
     else:
@@ -69,6 +70,12 @@ def create_async_export(xform, export_type, query, force_xlsx, options=None):
         export.save()
         return export, result
     return None
+
+
+@task()
+def add(a,b):
+    return a+b
+
 
 @task()
 def create_json_export(username, id_string, export_id, query=None):

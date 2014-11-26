@@ -11,6 +11,7 @@ from odk_logger.models import Attachment, Instance
 from utils.image_tools import image_url
 
 from main.tests.test_base import MainTestCase
+import time
 
 
 class AttachmentTest(MainTestCase):
@@ -52,6 +53,10 @@ class AttachmentTest(MainTestCase):
                 self.assertTrue(
                     default_storage.exists(thumbnail))
         check_datetime = datetime.now()
+
+        #So we can check on fast computers
+        time.sleep(1)
+        
         # replace or regenerate thumbnails if they exist
         call_command("create_image_thumbnails", force=True)
         for attachment in Attachment.objects.filter(instance=self.instance):

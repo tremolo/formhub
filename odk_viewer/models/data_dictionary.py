@@ -256,7 +256,7 @@ class DataDictionary(XForm):
             return '/'.join(l[2:])
 
         header_list = [shorten(xpath) for xpath in self.xpaths()]
-        header_list += [UUID, SUBMISSION_TIME]
+        header_list += [UUID, SUBMISSION_TIME, "webhooks"]
         if include_additional_headers:
             header_list += self._additional_headers()
         return header_list

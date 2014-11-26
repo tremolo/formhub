@@ -6,7 +6,7 @@ import json
 from dateutil import parser
 from bson import json_util
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
 from django.db.models.signals import post_save, pre_delete
 from restservice.utils import call_service
 from stats.tasks import stat_log
@@ -294,12 +294,15 @@ def _remove_from_mongo(sender, **kwargs):
 
 pre_delete.connect(_remove_from_mongo, sender=ParsedInstance)
 
-
 def rest_service_form_submission(sender, **kwargs):
-    parsed_instance = kwargs.get('instance')
-    created = kwargs.get('created')
-    if created:
-        call_service(parsed_instance)
+    
+    # So we can be sure that all data is saved 
+    # and we can find it once we pass the task
+    # on to celery.
+    transaction.commit()
+
+    if kwargs.get('created'):
+        call_service(kwargs.get('instance'))
 
 
 post_save.connect(rest_service_form_submission, sender=ParsedInstance)

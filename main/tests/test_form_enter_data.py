@@ -11,7 +11,6 @@ from django.test import RequestFactory
 from django.core.urlresolvers import reverse
 from django.core.validators import URLValidator
 from django.conf import settings
-from nose import SkipTest
 
 from test_base import MainTestCase
 from main.views import set_perm, show, qrcode
@@ -41,7 +40,8 @@ class TestFormEnterData(MainTestCase):
 
     def setUp(self):
         MainTestCase.setUp(self)
-        self._create_user_and_login()
+        #Already done by setUp
+        #self._create_user_and_login()
         self._publish_transportation_form_and_submit_instance()
         self.perm_url = reverse(set_perm, kwargs={
             'username': self.user.username, 'id_string': self.xform.id_string})
@@ -61,7 +61,7 @@ class TestFormEnterData(MainTestCase):
 
     def test_enketo_remote_server(self):
         if not self._running_enketo():
-            raise SkipTest
+            return
         server_url = 'https://testserver.com/bob'
         form_id = "test_%s" % re.sub(re.compile("\."), "_", str(time()))
         url = enketo_url(server_url, form_id)
@@ -76,7 +76,7 @@ class TestFormEnterData(MainTestCase):
             request, self.user.username, self.xform.id_string)
         return response
 
-    @unittest.skipIf(settings.EHEALTH_AFRICA_OPTOMIZATIONS, 'No QRCODE on eHealth screens')
+    @unittest.skipIf(not hasattr(settings, "EHEALTH_AFRICA_OPTOMIZATIONS"), 'No QRCODE on eHealth screens')
     def test_qrcode_view(self):
         with HTTMock(enketo_mock):
             response = self._get_grcode_view_response()
@@ -86,7 +86,7 @@ class TestFormEnterData(MainTestCase):
                 data = f.read()
                 self.assertContains(response, data.strip(), status_code=200)
 
-    @unittest.skipIf(settings.EHEALTH_AFRICA_OPTOMIZATIONS, 'No QRCODE on eHealth screens')
+    @unittest.skipIf(not hasattr(settings, "EHEALTH_AFRICA_OPTOMIZATIONS"), 'No QRCODE on eHealth screens')
     def test_qrcode_view_with_enketo_error(self):
         with HTTMock(enketo_error_mock):
             response = self._get_grcode_view_response()
@@ -94,13 +94,14 @@ class TestFormEnterData(MainTestCase):
 
     def test_enter_data_redir(self):
         if not self._running_enketo():
-            raise SkipTest
+            return 
         factory = RequestFactory()
         request = factory.get('/')
         request.user = self.user
         response = enter_data(
-            request, self.user.username, self.xform.id_string)
+            request, self.user.username, self.xform.id_string, test_server="https://testserver.com/bob")
         #make sure response redirect to an enketo site
+                
         enketo_base_url = urlparse(settings.ENKETO_URL).netloc
         redirected_base_url = urlparse(response['Location']).netloc
         #TODO: checking if the form is valid on enketo side

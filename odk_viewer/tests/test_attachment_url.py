@@ -25,17 +25,6 @@ class TestAttachmentUrl(MainTestCase):
             self.url, {"media_file": self.attachment_media_file})
         self.assertEqual(response.status_code, 302)  # redirects to amazon
 
-
-    def test_mediafile_empty(self):
-        response = self.client.get(
-            self.url, {"media_file": ""})
-        self.assertEqual(response.status_code, 404)
-
-    def test_mediafile_invalid_filename(self):
-        response = self.client.get(
-            self.url, {"media_file": "    "})
-        self.assertEqual(response.status_code, 404)
-
     def test_no_mediafile_parameter(self):
         response = self.client.get(self.url, {})
         self.assertEqual(response.status_code, 404)

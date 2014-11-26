@@ -36,6 +36,7 @@ ve/
 .sass-cache
 .settings
 .preset/test_*
+.vagrant
 mongo_vs_instance_counts_report.txt
 
 *.bak

@@ -696,7 +696,7 @@ def data_view(request, username, id_string):
 
 def attachment_url(request, size='medium'):
     # the media_file parameter is required, check also for empty string
-    media_file = request.GET.get(‘media_file’,’’).strip()
+    media_file = request.GET.get('media_file','').strip()
     if not media_file:
         return HttpResponseNotFound(_(u'Attachment not found. You need to provide the "media_file" parameter.'))
 

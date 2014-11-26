@@ -695,7 +695,10 @@ def data_view(request, username, id_string):
 
 
 def attachment_url(request, size='medium'):
-    media_file = request.GET.get('media_file').split("?")[0]
+    media_file = request.GET.get('media_file')
+    if not media_file:
+        return HttpResponseNotFound(_(u'Attachment not found. You need to provide the "media_file" parameter.'))
+
     # TODO: how to make sure we have the right media file,
     # this assumes duplicates are the same file
     result = Attachment.objects.filter(media_file=media_file)[0:1]

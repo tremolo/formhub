@@ -23,15 +23,16 @@ south_logger.setLevel(logging.INFO)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'formhubdjangodb',
-        'USER': 'postgres',
-        'PASSWORD': '',
-        'HOST': '',
+        'NAME': 'POSTGRES_DB',
+        'USER': 'POSTGRES_USER',
+        'PASSWORD': 'POSTGRES_PASSWORD',
+        'HOST': 'POSTGRES_HOST',
         #'OPTIONS': {
         #    'autocommit': True,  # NOTE: this option becomes obsolete in django 1.6
         #}
     },
 }
+
 # or:
 DEBUG = True
 

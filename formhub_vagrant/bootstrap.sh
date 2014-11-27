@@ -44,14 +44,20 @@ git clone -b $FORMHUB_GIT_BRANCH $FORMHUB_GIT_REPO $FORMHUB_BASE
 pip install -r $FORMHUB_BASE/requirements.pip
 
 # add the postgres driver installed by apt-get to the virtualenv
-rsync -av /usr/lib/python2.7/dist-packages/psycopg2 $FORMHUB_VIRTUALENV/lib/python2.7/site-packages/
+#rsync -av /usr/lib/python2.7/dist-packages/psycopg2 $FORMHUB_VIRTUALENV/lib/python2.7/site-packages/
 
 # Init the DB
-POSTGRES_INITDB="DROP DATABASE IF EXISTS $POSTGRES_DB;DROP USER IF EXISTS $POSTGRES_USER;" \
-                              "CREATE USER $POSTGRES_USER WITH  PASSWORD '$POSTGRES_PASSWORD';"
+POSTGRES_CLEARDB="DROP DATABASE IF EXISTS $POSTGRES_DB;"
+POSTGRES_CLEARUSER="DROP USER IF EXISTS $POSTGRES_USER;" 
+POSTGRES_INITDB="CREATE USER $POSTGRES_USER WITH  PASSWORD '$POSTGRES_PASSWORD';"
 
 # just start postgres to update the base settings and stop it again
-/etc/init.d/postgresql start && sudo -u postgres psql --command "$POSTGRES_INITDB" &&  sudo -u postgres createdb -O $POSTGRES_USER $POSTGRES_DB && /etc/init.d/postgresql stop
+/etc/init.d/postgresql start && \
+   sudo -u postgres psql --command "$POSTGRES_CLEARDB" &&  \
+   sudo -u postgres psql --command "$POSTGRES_CLEARUSER" &&  \
+   sudo -u postgres psql --command "$POSTGRES_INITDB" &&  \
+   sudo -u postgres createdb -O $POSTGRES_USER $POSTGRES_DB && \
+/etc/init.d/postgresql stop
 
 # update django config
 sed -i "s/POSTGRES_DB/$POSTGRES_DB/g;s/POSTGRES_USER/$POSTGRES_USER/g;s/POSTGRES_PASSWORD/$POSTGRES_PASSWORD/g;s/POSTGRES_HOST/$POSTGRES_HOST/g" $FORMHUB_BASE/formhub/preset/ehealth_test.py

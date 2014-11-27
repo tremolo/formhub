@@ -29,8 +29,8 @@ apt-get install  -y postgresql postgresql-contrib
 apt-get install -y python-psycopg2 
 apt-get install -y celeryd
 
-# java needed for pyxform validation
-#apt-get  install -y openjdk-7-jre-headless
+# java needed for pyxform validation !
+apt-get  install -y openjdk-7-jre-headless
 
 # now we can generate our postgres password
 POSTGRES_PASSWORD=`pwgen -c -n -1 12`
